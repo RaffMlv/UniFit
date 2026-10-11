@@ -1,10 +1,16 @@
-import { Button } from '@/components/ui/button'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import Login from '@/pages/Login'
+import Cadastro from '@/pages/Cadastro'
+import Inicio from '@/pages/Inicio'
+import RotaProtegida from '@/routes/RotaProtegida'
 
 export default function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center gap-4">
-      <h1 className="text-3xl font-bold">UniFit</h1>
-      <Button>Funcionou</Button>
-    </div>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/cadastro" element={<Cadastro />} />
+      <Route path="/inicio" element={<RotaProtegida><Inicio /></RotaProtegida>} />
+      <Route path="*" element={<Navigate to="/inicio" replace />} />
+    </Routes>
   )
 }

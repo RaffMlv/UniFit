@@ -37,7 +37,7 @@ const cadastroSchema = z.object({
 router.post('/cadastro', async (req, res) => {
     const parsedData = cadastroSchema.safeParse(req.body)
     if(!parsedData.success) return res.status(400).
-    json({error: parsedData.error.errors.map(e => e.message).join(', ')})
+    json({error: parsedData.error.issues.map(e => e.message).join(', ')})
     const {nome, cpf, email, senha} = parsedData.data
 
     const[usuarioExistente] = await pool.query

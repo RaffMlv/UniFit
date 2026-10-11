@@ -109,7 +109,7 @@ Acesse `http://localhost:5173`.
 
 ### 5. Criar um usuário administrador
 
-1. Cadastre um usuário pela tela de cadastro (ou por `POST /api/auth/register`).
+1. Cadastre um usuário pela tela de cadastro (ou por `POST /api/auth/cadastro).
 2. No Workbench, promova-o:
 
 ```sql
