@@ -33,7 +33,7 @@ UniFit/
 ### 1. Clonar e abrir
 
 ```bash
-git clone https://github.com/SEU-USUARIO/UniFit.git
+git clone https://github.com/RaffMlv/UniFit.git
 cd UniFit
 git checkout develop
 code .
