@@ -67,42 +67,80 @@ export default function Cadastro() {
   )
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-2 text-2xl font-bold">UniFit</div>
-          <CardTitle>Criar conta</CardTitle>
-          <CardDescription>Preencha seus dados para começar.</CardDescription>
+    <main className="flex min-h-screen items-center justify-center bg-[#E4F2FD] px-5 py-10">
+      <Card className="w-full max-w-2xl border-0 bg-white shadow-lg">
+        <CardHeader className="px-6 pt-8 text-center sm:px-10">
+          <div className="mb-6 font-heading text-4xl font-bold text-[#142191]">
+            UNI<span className="text-[#004AF7]">FIT</span>
+          </div>
+          <CardTitle className="font-heading text-3xl font-bold text-[#142191]">
+            Crie sua conta
+          </CardTitle>
+          <CardDescription className="mt-2 text-slate-600">
+            Preencha seus dados para fazer parte do UniFit.
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={enviar} className="space-y-4" noValidate>
+        <CardContent className="px-6 pb-8 sm:px-10">
+          <form onSubmit={enviar} className="space-y-5" noValidate>
             {campo('nome', 'Nome completo', 'Seu nome completo')}
-            {campo('cpf', 'CPF', '000.000.000-00')}
-            {campo('email', 'E-mail', 'seuemail@unifor.br', 'email')}
-            {campo('senha', 'Senha', 'Mínimo de 8 caracteres', 'password')}
-            {campo('confirmar', 'Confirmar senha', 'Repita a senha', 'password')}
-
-            <div className="space-y-1.5">
-              <label className="flex items-start gap-2 text-sm">
-                <input type="checkbox" checked={dados.termos}
-                  onChange={alterar('termos')} onBlur={marcar('termos')} className="mt-1" />
-                <span>Li e aceito os Termos de Uso e a Política de Privacidade.</span>
-              </label>
-              {erroDe('termos') && <p className="text-sm text-red-600">{erros.termos}</p>}
+            <div className="grid gap-5 sm:grid-cols-2">
+              {campo('cpf', 'CPF', '000.000.000-00')}
+              {campo('email', 'E-mail', 'seuemail@unifor.br', 'email')}
             </div>
-
-            {erroGeral && <p role="alert" className="text-sm text-red-600">{erroGeral}</p>}
-
-            <Button type="submit" className="w-full" disabled={!valido || enviando}>
+            <div className="grid gap-5 sm:grid-cols-2">
+              {campo('senha', 'Senha', 'Mínimo de 8 caracteres', 'password')}
+              {campo('confirmar', 'Confirmar senha', 'Repita a senha', 'password')}
+            </div>
+            <div className="space-y-2">
+              <label className="flex items-start gap-3 text-sm leading-6 text-slate-600">
+                <input
+                  type="checkbox"
+                  checked={dados.termos}
+                  onChange={alterar('termos')}
+                  onBlur={marcar('termos')}
+                  aria-invalid={!!erroDe('termos')}
+                  aria-describedby={
+                    erroDe('termos') ? 'erro-termos' : undefined
+                  }
+                  className="mt-1 h-4 w-4 shrink-0 accent-[#004AF7]"
+                />
+                <span>
+                  Li e aceito os Termos de Uso e a Política de Privacidade.
+                </span>
+              </label>
+              {erroDe('termos') && (
+                <p id="erro-termos" className="text-sm text-red-600">
+                  {erros.termos}
+                </p>
+              )}
+            </div>
+            {erroGeral && (
+              <p
+                role="alert"
+                className="rounded-lg bg-red-50 p-3 text-sm text-red-600"
+              >
+                {erroGeral}
+              </p>
+            )}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={!valido || enviando}
+            >
               {enviando ? 'Criando...' : 'Criar conta'}
             </Button>
-
-            <p className="text-center text-sm">
-              Já tem conta? <Link to="/login" className="underline">Entrar</Link>
+            <p className="text-center text-sm text-slate-600">
+              Já possui uma conta?{' '}
+              <Link
+                to="/login"
+                className="font-semibold text-[#004AF7] hover:underline"
+              >
+                Entrar
+              </Link>
             </p>
           </form>
         </CardContent>
       </Card>
-    </div>
+    </main>
   )
 }
