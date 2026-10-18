@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import ratelimit from 'express-rate-limit'
 import authRoutes from './routes/auth.routes.js'
+import triagemRoutes from './routes/triagem.routes.js'
 
 const app = express()
 app.use(helmet())
@@ -13,7 +14,7 @@ app.use(cookieParser())
 
 app.get('/api/saude', (req, res) => res.json({ status: 'ok' }))
 app.use('/api/auth', ratelimit({ windowMs: 15 * 60 * 1000, max: 100 }), authRoutes)
-
+app.use('/api/triagem', triagemRoutes)
 //Erro genérico não exposto para o usuário, mas logado no console para depuração
 app.use((err, req, res, next) => {
     console.error(err.stack)

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, LockKeyhole, MailCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,27 @@ import {
   CardDescription,
   CardContent,
 } from '@/components/ui/card'
+import { api } from '@/services/api'
+
+export default function EsqueciSenha() {
+  const [email, setEmail] = useState('')
+  const [enviado, setEnviado] = useState(false)
+  const [enviando, setEnviando] = useState(false)
+  const [erroGeral, setErroGeral] = useState('')
+
+  async function enviar(e) {
+    e.preventDefault()
+    setErroGeral('')
+    try {
+      setEnviando(true)
+      await api('/auth/esqueci-senha', { method: 'POST', body: { email: email.trim() } })
+      setEnviado(true)
+    } catch (err) {
+      setErroGeral(err.message)
+    } finally {
+      setEnviando(false)
+    }
+  }
 return (
     <main className="flex min-h-screen items-center justify-center bg-[#E4F2FD] px-5 py-10">
       <Card className="w-full max-w-md border-0 bg-white shadow-lg">
@@ -88,4 +110,4 @@ return (
         </CardContent>
       </Card>
     </main>
-  )
+  )}
