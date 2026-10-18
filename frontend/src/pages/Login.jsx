@@ -18,25 +18,46 @@ export default function Login() {
 
   const alterar = (campo) => (e) => setDados({ ...dados, [campo]: e.target.value })
 
-  async function enviar(e) {
-    e.preventDefault()
-    setErroGeral('')
-    const novos = {}
-    if (!dados.login.trim()) novos.login = 'Resposta inválida'
-    if (!dados.senha) novos.senha = 'Resposta inválida'
-    setErros(novos)
-    if (Object.keys(novos).length) return
+async function enviar(e) {
+  e.preventDefault()
+  if (enviando) return
 
-    try {
-      setEnviando(true)
-      await login(dados.login.trim(), dados.senha)
-      navigate('/inicio')
-    } catch (err) {
-      setErroGeral(err.message)
-    } finally {
-      setEnviando(false)
-    }
+  setErroGeral('')
+
+  const novos = {}
+  const identificador = dados.login.trim()
+
+  const formatoEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const formatoCPF = /^(\d{11}|\d{3}\.\d{3}\.\d{3}-\d{2})$/
+
+  if (!identificador) {
+    novos.login = 'Informe seu e-mail ou CPF.'
+  } else if (
+    !formatoEmail.test(identificador) &&
+    !formatoCPF.test(identificador)
+  ) {
+    novos.login =
+      'Informe um e-mail válido ou um CPF com 11 números, com ou sem pontuação.'
   }
+
+  if (!dados.senha) {
+    novos.senha = 'Informe sua senha.'
+  }
+
+  setErros(novos)
+
+  if (Object.keys(novos).length > 0) return
+
+  try {
+    setEnviando(true)
+    await login(identificador, dados.senha)
+    navigate('/inicio')
+  } catch (err) {
+    setErroGeral(err.message)
+  } finally {
+    setEnviando(false)
+  }
+}
 
   return (<div className="flex min-h-screen bg-[#E4F2FD]">
   <main className="flex w-full items-center justify-center px-5 py-10 md:w-1/2 md:px-10">

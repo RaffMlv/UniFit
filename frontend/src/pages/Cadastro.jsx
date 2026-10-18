@@ -7,16 +7,49 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { api } from '@/services/api'
 import { useAuth } from '@/contexts/AuthContext'
 
-const soDigitos = (v) => v.replace(/\D/g, '')
-
 function validar(d) {
   const erros = {}
-  if (d.nome.trim().length < 3) erros.nome = 'Resposta inválida'
-  if (soDigitos(d.cpf).length !== 11) erros.cpf = 'Resposta inválida'
-  if (!/^\S+@\S+\.\S+$/.test(d.email)) erros.email = 'Resposta inválida'
-  if (d.senha.length < 8) erros.senha = 'A senha deve ter ao menos 8 caracteres'
-  if (d.confirmar !== d.senha || !d.confirmar) erros.confirmar = 'As senhas não coincidem'
-  if (!d.termos) erros.termos = 'Aceite os termos para continuar'
+  const nome = d.nome.trim()
+  const cpf = d.cpf.trim()
+  const email = d.email.trim()
+
+  const formatoCPF = /^(\d{11}|\d{3}\.\d{3}\.\d{3}-\d{2})$/
+  const formatoEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+  if (!nome) {
+    erros.nome = 'Informe seu nome completo.'
+  } else if (nome.length < 3) {
+    erros.nome = 'O nome deve ter pelo menos 3 caracteres.'
+  }
+
+  if (!cpf) {
+    erros.cpf = 'Informe seu CPF.'
+  } else if (!formatoCPF.test(cpf)) {
+    erros.cpf = 'Use 11 números ou o formato 000.000.000-00.'
+  }
+
+  if (!email) {
+    erros.email = 'Informe seu e-mail.'
+  } else if (!formatoEmail.test(email)) {
+    erros.email = 'Informe um e-mail válido.'
+  }
+
+  if (!d.senha) {
+    erros.senha = 'Informe sua senha.'
+  } else if (d.senha.length < 8) {
+    erros.senha = 'A senha deve ter ao menos 8 caracteres.'
+  }
+
+  if (!d.confirmar) {
+    erros.confirmar = 'Confirme sua senha.'
+  } else if (d.confirmar !== d.senha) {
+    erros.confirmar = 'As senhas não coincidem.'
+  }
+
+  if (!d.termos) {
+    erros.termos = 'Aceite os termos para continuar.'
+  }
+
   return erros
 }
 
@@ -39,14 +72,26 @@ export default function Cadastro() {
   const erroDe = (campo) => tocado[campo] && erros[campo]
 
   async function enviar(e) {
-    e.preventDefault()
-    if (!valido) return
-    setErroGeral('')
+  e.preventDefault()
+  if (enviando) return
+
+  setErroGeral('')
+
+  setTocado({
+    nome: true,
+    cpf: true,
+    email: true,
+    senha: true,
+    confirmar: true,
+    termos: true,
+  })
+
+  if (!valido) return
     try {
       setEnviando(true)
       await api('/auth/cadastro', {
         method: 'POST',
-        body: { nome: dados.nome.trim(), cpf: dados.cpf, email: dados.email.trim(), senha: dados.senha },
+        body: { nome: dados.nome.trim(), cpf: dados.cpf.trim(), email: dados.email.trim(), senha: dados.senha },
       })
       await login(dados.email.trim(), dados.senha)
       navigate('/inicio')
@@ -57,14 +102,28 @@ export default function Cadastro() {
     }
   }
 
-  const campo = (id, rotulo, placeholder, tipo = 'text') => (
-    <div className="space-y-1.5">
-      <Label htmlFor={id}>{rotulo}</Label>
-      <Input id={id} type={tipo} placeholder={placeholder} value={dados[id]}
-        onChange={alterar(id)} onBlur={marcar(id)} aria-invalid={!!erroDe(id)} />
-      {erroDe(id) && <p className="text-sm text-red-600">{erros[id]}</p>}
-    </div>
-  )
+const campo = (id, rotulo, placeholder, tipo = 'text') => (
+  <div className="space-y-1.5">
+    <Label htmlFor={id}>{rotulo}</Label>
+
+    <Input
+      id={id}
+      type={tipo}
+      placeholder={placeholder}
+      value={dados[id]}
+      onChange={alterar(id)}
+      onBlur={marcar(id)}
+      aria-invalid={!!erroDe(id)}
+      aria-describedby={erroDe(id) ? `erro-${id}` : undefined} 
+    />
+
+    {erroDe(id) && (
+      <p id={`erro-${id}`} className="text-sm text-red-600">
+        {erros[id]}
+      </p>
+    )}
+  </div>
+)
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#E4F2FD] px-5 py-10">
@@ -125,7 +184,7 @@ export default function Cadastro() {
             <Button
               type="submit"
               className="w-full"
-              disabled={!valido || enviando}
+              disabled={enviando}
             >
               {enviando ? 'Criando...' : 'Criar conta'}
             </Button>
