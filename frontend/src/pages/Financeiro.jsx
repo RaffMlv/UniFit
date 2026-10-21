@@ -1,3 +1,4 @@
+import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
 import { useMemo, useState } from 'react'
 import { CreditCard, ReceiptText, AlertCircle, CheckCircle2, Wallet, Search } from 'lucide-react'
 
@@ -20,11 +21,11 @@ export default function Financeiro() {
   const totalPago = cobrancas.filter(c => c.situacao === 'Pago').reduce((s, c) => s + c.valor, 0)
 
   return (
-    <main className="min-h-screen bg-[#E4F2FD] px-4 py-8 text-[#142191] sm:px-6 lg:px-10">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <LayoutAutenticado titulo="Financeiro">
+      <div className="space-y-6 text-[#142191]">
         <div>
           <p className="text-sm font-semibold text-[#004AF7]">ÁREA DO ALUNO</p>
-          <h1 className="mt-1 font-heading text-4xl font-bold">FINANCEIRO</h1>
+          <h2 className="mt-1 font-heading text-4xl font-bold">FINANCEIRO</h2>
           <p className="mt-2 text-sm text-slate-600">Consulte sua situação financeira e o histórico de cobranças, quando esse módulo estiver habilitado.</p>
         </div>
         <p className="rounded-xl border border-[#87B7FF] bg-white p-4 text-sm text-slate-600"><strong>Dados fictícios para o design.</strong> Os valores abaixo não representam cobranças reais da Unifor. O módulo financeiro só deve ser ativado caso existam cobranças vinculadas à academia.</p>
@@ -64,7 +65,7 @@ export default function Financeiro() {
           </div>
         </div>
       )}
-    </main>
+    </LayoutAutenticado>
   )
 }
 function Indicador({ icone: Icone, titulo, valor, descricao }) { return <div className="rounded-2xl bg-white p-6 shadow-sm"><Icone className="text-[#004AF7]" size={26}/><p className="mt-4 text-sm text-slate-500">{titulo}</p><p className="mt-1 break-words font-heading text-3xl font-bold">{valor}</p><p className="mt-2 text-xs text-slate-500">{descricao}</p></div> }

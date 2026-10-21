@@ -2,12 +2,15 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { UserRound, Mail, IdCard, Phone, CalendarDays, Target, ShieldCheck, Save, Pencil, LockKeyhole, LogOut } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
 
 const formatarData = (valor) => {
   if (!valor) return 'Não informado'
   const [ano, mes, dia] = valor.split('-')
   return ano && mes && dia ? `${dia}/${mes}/${ano}` : valor
 }
+
+const mascararCpf = (cpf) => (cpf && cpf.length === 11 ? `•••.•••.•••-${cpf.slice(9)}` : '')
 
 export default function Perfil() {
   const { usuario, logout } = useAuth()
@@ -20,15 +23,15 @@ export default function Perfil() {
   function salvar(evento) {
     evento.preventDefault()
     setEditando(false)
-    setMensagem('Alterações salvas')
+    setMensagem('Alterações aplicadas só nesta tela. O salvamento no servidor ainda não foi integrado.')
   }
 
   return (
-    <main className="min-h-screen bg-[#E4F2FD] px-4 py-8 text-[#142191] sm:px-6 lg:px-10">
-      <div className="mx-auto max-w-5xl space-y-6">
+    <LayoutAutenticado titulo="Meu perfil">
+      <div className="mx-auto max-w-5xl space-y-6 text-[#142191]">
         <div>
           <p className="text-sm font-semibold text-[#004AF7]">ÁREA DO ALUNO</p>
-          <h1 className="mt-1 font-heading text-4xl font-bold">MEU PERFIL</h1>
+          <h2 className="mt-1 font-heading text-4xl font-bold">MEU PERFIL</h2>
           <p className="mt-2 text-sm text-slate-600">Consulte seus dados e as informações disponíveis na sua conta.</p>
         </div>
         <section className="flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm sm:flex-row sm:items-center">
@@ -53,7 +56,7 @@ export default function Perfil() {
           </div>
           <div className="grid gap-5 sm:grid-cols-2">
             <Dado icone={UserRound} rotulo="Nome completo" valor={usuario?.nome} />
-            <Dado icone={IdCard} rotulo="Matrícula" valor={usuario?.matricula} />
+            <Dado icone={IdCard} rotulo="CPF" valor={mascararCpf(usuario?.cpf)} /> 
             <Dado icone={Mail} rotulo="E-mail institucional" valor={usuario?.email} />
             <label className="block">
               <span className="mb-2 flex items-center gap-2 text-sm font-semibold"><Phone size={16} /> Telefone</span>
@@ -82,7 +85,7 @@ export default function Perfil() {
             <h2 className="flex items-center gap-2 font-heading text-2xl font-bold"><Target size={22} className="text-[#004AF7]" /> OBJETIVOS E TRIAGEM</h2>
             <p className="mt-3 text-sm text-slate-600">Objetivo atual: <strong className="text-[#142191]">{usuario?.objetivo || 'Informação ainda não disponível'}</strong></p>
             <p className="mt-2 text-sm text-slate-600">Os dados autorizados da anamnese e os registros de avaliação aparecerão aqui após integração.</p>
-            <button type="button" onClick={() => navigate('/triagem')} className="mt-5 rounded-lg bg-[#E4F2FD] px-4 py-3 text-sm font-semibold text-[#142191] hover:bg-[#87B7FF]">Ver triagem</button>
+            <button type="button" onClick={() => navigate('/triagem')} className="mt-5 rounded-lg bg-[#E4F2FD] px-4 py-3 text-sm font-semibold text-[#142191] hover:bg-[#87B7FF]">Refazer triagem</button>
           </section>
           <section className="rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="flex items-center gap-2 font-heading text-2xl font-bold"><ShieldCheck size={22} className="text-[#004AF7]" /> PRIVACIDADE E SEGURANÇA</h2>
@@ -95,7 +98,7 @@ export default function Perfil() {
         </div>
         <button type="button" onClick={logout} className="inline-flex items-center gap-2 rounded-lg border border-[#142191] px-5 py-3 font-semibold hover:bg-white"><LogOut size={18} /> Encerrar sessão</button>
       </div>
-    </main>
+    </LayoutAutenticado>
   )
 }
 function Dado({ icone: Icone, rotulo, valor }) {

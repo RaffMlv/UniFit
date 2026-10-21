@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, SlidersHorizontal, Dumbbell, X, ArrowRight, ImageOff } from 'lucide-react'
+import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
+import { exerciciosExemplo } from '@/data/exerciciosExemplo'
+
 const todos = 'Todos'
 const opcoes = (campo) => [todos, ...new Set(exerciciosExemplo.map(x => x[campo]))]
 
@@ -19,11 +22,11 @@ export default function Biblioteca() {
   }), [busca, musculo, equipamento, nivel, categoria])
   function limpar() { setBusca(''); setMusculo(todos); setEquipamento(todos); setNivel(todos); setCategoria(todos) }
   return (
-    <main className="min-h-screen bg-[#E4F2FD] px-4 py-8 text-[#142191] sm:px-6 lg:px-10">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <LayoutAutenticado titulo="Biblioteca de exercícios">
+      <div className="space-y-6 text-[#142191]">
         <div>
           <p className="text-sm font-semibold text-[#004AF7]">EXERCÍCIOS UNIFIT</p>
-          <h1 className="mt-1 font-heading text-4xl font-bold">BIBLIOTECA DE EXERCÍCIOS</h1>
+          <h2 className="mt-1 font-heading text-4xl font-bold">BIBLIOTECA DE EXERCÍCIOS</h2>
           <p className="mt-2 text-sm text-slate-600">Pesquise por exercício, grupo muscular ou equipamento.</p>
         </div>
         <div className="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
@@ -69,7 +72,7 @@ export default function Biblioteca() {
         )}
         <p className="text-xs text-slate-500">Biblioteca demonstrativa: os exercícios, imagens, categorias e níveis definitivos deverão vir do cadastro administrativo.</p>
       </div>
-    </main>
+    </LayoutAutenticado>
   )
 }
 

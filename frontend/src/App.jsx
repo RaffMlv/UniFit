@@ -4,6 +4,10 @@ import Cadastro from '@/pages/Cadastro'
 import EsqueciSenha from '@/pages/EsqueciSenha'
 import Triagem from '@/pages/Triagem'
 import Inicio from '@/pages/Inicio'
+import Financeiro from './pages/Financeiro'
+import Perfil from './pages/Perfil'
+import Agendamento from './pages/Agendamento'
+import Biblioteca from './pages/Biblioteca'
 import RotaProtegida from '@/routes/RotaProtegida'
 import { useAuth } from '@/contexts/AuthContext'
 import { api } from '@/services/api'
@@ -30,6 +34,12 @@ export default function App() {
       } />
       <Route path="/inicio" element={<RotaProtegida><Inicio /></RotaProtegida>} />
       <Route path="*" element={<Navigate to="/inicio" replace />} />
+      <Route path="/financeiro" element={
+        <RotaProtegida roles={['aluno']}><Financeiro /></RotaProtegida>
+      } />
+      <Route path="/agendamentos" element={<RotaProtegida><Agendamento /></RotaProtegida>} />
+      <Route path="/biblioteca" element={<RotaProtegida><Biblioteca /></RotaProtegida>} />
+      <Route path="/perfil" element={<RotaProtegida><Perfil /></RotaProtegida>} />
     </Routes>
   )
 }

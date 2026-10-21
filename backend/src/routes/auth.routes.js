@@ -74,11 +74,14 @@ router.post('/logout', autenticar, (req, res) => {
     res.json({message: 'Logout realizado com sucesso.'})
 })
 
-router.get('/perfil', autenticar, async(req, res) => {
-    const [rows] = await pool.query(
+router.get('/perfil', autenticar, async (req, res) => {
+  const [rows] = await pool.query(
     `SELECT u.id, u.nome, u.cpf, u.email, u.papel,
-            EXISTS(SELECT 1 FROM triagens t WHERE t.usuario_id = u.id) AS triagemConcluida
-     FROM usuarios u WHERE u.id = ?`, [req.usuario.id])
+            t.objetivo AS objetivo,
+            t.usuario_id IS NOT NULL AS triagemConcluida
+     FROM usuarios u
+     LEFT JOIN triagens t ON t.usuario_id = u.id
+     WHERE u.id = ?`, [req.usuario.id])
   if (!rows[0]) return res.status(401).json({ erro: 'Sessão inválida' })
   res.json({ ...rows[0], triagemConcluida: Boolean(rows[0].triagemConcluida) })
 })

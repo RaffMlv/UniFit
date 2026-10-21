@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { CalendarDays, Clock3, UserRoundCheck, CheckCircle2, Info, X } from 'lucide-react'
+import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
 
 const servicos = ['Educação Física', 'Fisioterapia', 'Nutrição']
 const horariosExemplo = ['08:00', '09:30', '11:00', '14:00', '15:30', '17:00']
@@ -45,11 +46,11 @@ function preparar() {
   }
 
   return (
-    <main className="min-h-screen bg-[#E4F2FD] px-4 py-8 text-[#142191] sm:px-6 lg:px-10">
-      <div className="mx-auto max-w-5xl space-y-6">
+    <LayoutAutenticado titulo="Agendamentos">
+      <div className="space-y-6 text-[#142191]">
         <div>
           <p className="text-sm font-semibold text-[#004AF7]">SERVIÇOS UNIFIT</p>
-          <h1 className="mt-1 font-heading text-4xl font-bold">AGENDAMENTO DE ATENDIMENTO</h1>
+          <h2 className="mt-1 font-heading text-4xl font-bold">AGENDAMENTO DE ATENDIMENTO</h2>
           <p className="mt-2 text-sm text-slate-600">Escolha o serviço, a data e um horário para solicitar seu atendimento.</p>
         </div>
         <div className="rounded-xl border border-[#87B7FF] bg-white p-4 text-sm text-slate-600">
@@ -122,7 +123,7 @@ function preparar() {
           </div>
         </div>
       )}
-    </main>
+    </LayoutAutenticado>
   )
 }
 function Resumo({ rotulo, valor }) { return <div><p className="text-xs text-slate-500">{rotulo}</p><p className="mt-1 font-semibold">{valor}</p></div> }
