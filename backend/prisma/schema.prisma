@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model triagens {
+  id                   Int       @id @default(autoincrement())
+  usuario_id           Int       @unique(map: "usuario_id")
+  objetivo             String    @db.VarChar(100)
+  biotipo              String    @db.VarChar(200)
+  experiencia          String    @db.VarChar(100)
+  esportes             Json
+  outro_esporte        String    @default("") @db.VarChar(150)
+  frequencia           String    @db.VarChar(50)
+  peso_kg              Decimal?  @db.Decimal(5, 1)
+  altura_cm            Decimal?  @db.Decimal(5, 1)
+  prefere_nao_informar Boolean   @default(false)
+  possui_limitacao     Boolean   @default(false)
+  regioes              Json
+  descricao_limitacao  String?   @db.Text
+  condicoes            Json
+  outra_condicao       String    @default("") @db.VarChar(200)
+  aceitou_termo        Boolean
+  criado_em            DateTime? @default(now()) @db.Timestamp(0)
+  atualizado_em        DateTime? @default(now()) @db.Timestamp(0)
+  usuarios             usuarios  @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_triagem_usuario")
+}
+
+model usuarios {
+  id         Int            @id @default(autoincrement())
+  nome       String         @db.VarChar(150)
+  cpf        String         @unique(map: "matricula") @db.Char(11)
+  email      String         @unique(map: "email") @db.VarChar(150)
+  senha_hash String         @db.VarChar(255)
+  papel      usuarios_papel @default(aluno)
+  ativo      Boolean        @default(true)
+  criado_em  DateTime?      @default(now()) @db.Timestamp(0)
+  triagens   triagens?
+}
+
+enum usuarios_papel {
+  aluno
+  monitor
+  admin
+}
