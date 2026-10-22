@@ -74,11 +74,25 @@ router.post('/logout', autenticar, (req, res) => {
     res.json({message: 'Logout realizado com sucesso.'})
 })
 
-router.get('/perfil', autenticar, async(req, res) => {
-    const [rows] = await pool.query
-    ('SELECT id, nome, cpf, email, papel FROM usuarios WHERE id = ?', [req.usuario.id])
-    const usuario = rows[0]
-    res.json({usuario})
+router.get('/perfil', autenticar, async (req, res) => {
+  const [rows] = await pool.query(
+    `SELECT u.id, u.nome, u.cpf, u.email, u.papel,
+            t.objetivo AS objetivo,
+            t.usuario_id IS NOT NULL AS triagemConcluida
+     FROM usuarios u
+     LEFT JOIN triagens t ON t.usuario_id = u.id
+     WHERE u.id = ?`, [req.usuario.id])
+  if (!rows[0]) return res.status(401).json({ erro: 'Sessão inválida' })
+  res.json({ ...rows[0], triagemConcluida: Boolean(rows[0].triagemConcluida) })
+})
+
+const esqueciSchema = z.object({ email: z.string().email() })
+
+router.post('/esqueci-senha', async (req, res) => {
+  const parsed = esqueciSchema.safeParse(req.body)
+  if (!parsed.success) return res.status(400).json({ erro: 'Resposta inválida' })
+
+  res.json({ mensagem: 'Se o e-mail estiver cadastrado, você receberá as instruções.' })
 })
 
 export default router
