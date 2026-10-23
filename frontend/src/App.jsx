@@ -34,7 +34,7 @@ export default function App() {
         <RotaProtegida roles={['aluno']} ignorarTriagem><TriagemRota /></RotaProtegida>
       } />
       <Route path="/inicio" element={<RotaProtegida><Inicio /></RotaProtegida>} />
-      <Route path="/inicio-admin"element={<RotaProtegida><InicioAdmin /></RotaProtegida>}/>
+      <Route path="/inicio-admin"element={<RotaProtegida roles={['admin']}> <InicioAdmin /></RotaProtegida>}/>
       <Route path="*" element={<Navigate to="/inicio" replace />} />
       <Route path="/financeiro" element={
         <RotaProtegida roles={['aluno']}><Financeiro /></RotaProtegida>
