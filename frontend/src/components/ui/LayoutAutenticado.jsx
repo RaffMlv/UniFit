@@ -85,7 +85,7 @@ function ItemMenu({ item, recolhido, aoNavegar }) {
   )
 }
 
-export default function LayoutAutenticado({ titulo, children }) {
+export default function LayoutAutenticado({ titulo, children, menu = MENU  }) {
   const { usuario, logout } = useAuth()
   const navigate = useNavigate()
   const [menuAberto, setMenuAberto] = useState(false) // gaveta no celular
@@ -209,7 +209,7 @@ export default function LayoutAutenticado({ titulo, children }) {
 
         <nav aria-label="Menu principal" className={`flex-1 overflow-y-auto px-3 pb-6 ${recolhido ? 'lg:px-2' : ''}`}>
           <ul className="space-y-1">
-            {MENU.map((item) => (
+            {menu.map((item) => (
               <li key={item.nome}>
                 <ItemMenu item={item} recolhido={recolhido} aoNavegar={() => setMenuAberto(false)} />
               </li>
