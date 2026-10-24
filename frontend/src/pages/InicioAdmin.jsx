@@ -17,7 +17,6 @@ import {
 } from 'lucide-react'
 import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
 
-// As páginas administrativas serão conectadas posteriormente.
 const menuAdmin = [
   { nome: 'Página inicial', icone: Home, rota: '/inicio-admin' },
   { nome: 'Treinos', icone: Dumbbell, rota: null },
@@ -33,24 +32,12 @@ const menuAdmin = [
   { nome: 'Configurações', icone: Settings, rota: null },
 ]
 
-// Dados fictícios usados apenas para apresentar o visual.
 const indicadores = [
-  { titulo: 'Alunos ativos', valor: '450', icone: Users },
-  { titulo: 'Aguardando ficha', valor: '5', icone: ClipboardList },
-  { titulo: 'Ocupação atual', valor: '65%', icone: Activity },
-  { titulo: 'Atendimentos do dia', valor: '12', icone: Clock },
-  { titulo: 'Fichas a aprovar', valor: '7', icone: ClipboardCheck },
-]
-
-const atividades = [
-  { texto: 'Monitor João criou um treino', icone: Dumbbell },
-  { texto: 'Novo cadastro efetuado', icone: User },
-]
-
-const pendencias = [
-  '3 cadastros pendentes',
-  'Manutenção de equipamento',
-  '7 fichas para aprovação',
+  { titulo: 'Alunos ativos', valor: null, icone: Users },
+  { titulo: 'Aguardando ficha', valor: null, icone: ClipboardList },
+  { titulo: 'Ocupação atual', valor: null, icone: Activity },
+  { titulo: 'Atendimentos do dia', valor: null, icone: Clock },
+  { titulo: 'Fichas a aprovar', valor: null, icone: ClipboardCheck },
 ]
 
 export default function InicioAdmin() {
@@ -94,18 +81,11 @@ export default function InicioAdmin() {
                 </h3>
               </div>
 
-              <p className="text-center text-4xl font-bold tracking-tight text-[#142191]">
-                {valor}
-              </p>
+                <p className="text-center text-4xl font-bold tracking-tight text-[#142191]">
+                {valor ?? '—'}
+                </p>
 
-              {titulo === 'Ocupação atual' && (
-                <div
-                  aria-hidden="true"
-                  className="mt-4 h-2 overflow-hidden rounded-full bg-[#E4F2FD]"
-                >
-                  <div className="h-full w-[65%] rounded-full bg-[#004AF7]" />
-                </div>
-              )}
+              
             </article>
           ))}
         </div>
@@ -125,22 +105,9 @@ export default function InicioAdmin() {
             Atividades recentes
           </h2>
 
-          <ul className="mt-5 divide-y divide-slate-100">
-            {atividades.map(({ texto, icone: Icone }) => (
-              <li
-                key={texto}
-                className="flex items-center gap-3 py-4 first:pt-0 last:pb-0"
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E4F2FD] text-[#004AF7]">
-                  <Icone size={19} aria-hidden="true" />
-                </span>
-
-                <p className="text-sm leading-6 text-slate-700">
-                  {texto}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <p className="mt-5 rounded-xl bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+          Atividades indisponíveis no momento.
+          </p>
         </section>
 
         <section
@@ -154,24 +121,9 @@ export default function InicioAdmin() {
             Pendências administrativas
           </h2>
 
-          <ul className="mt-5 space-y-3">
-            {pendencias.map((texto) => (
-              <li
-                key={texto}
-                className="flex items-center gap-3 rounded-xl bg-amber-50 px-4 py-3"
-              >
-                <TriangleAlert
-                  size={20}
-                  aria-hidden="true"
-                  className="shrink-0 text-amber-700"
-                />
-
-                <p className="text-sm leading-6 text-slate-700">
-                  {texto}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <p className="mt-5 rounded-xl bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+            Pendências indisponíveis no momento.
+          </p>
         </section>
       </div>
     </LayoutAutenticado>
