@@ -29,8 +29,12 @@ export default function Login() {
 
     try {
       setEnviando(true)
-      await login(dados.login.trim(), dados.senha)
-      navigate('/inicio')
+      const usuarioLogado = await login(dados.login.trim(), dados.senha)
+
+      navigate(
+        usuarioLogado.papel === 'admin' ? '/inicio-admin' : '/inicio',
+        { replace: true }
+      )
     } catch (err) {
       setErroGeral(err.message)
     } finally {
