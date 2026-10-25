@@ -1,0 +1,45 @@
+USE academia_unifor;
+
+CREATE TABLE IF NOT EXISTS exercicios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL UNIQUE,
+  musculo VARCHAR(60) NOT NULL,
+  secundarios VARCHAR(200) NOT NULL DEFAULT '',
+  equipamento VARCHAR(60) NOT NULL,
+  nivel ENUM('Iniciante','Intermediário','Avançado') NOT NULL DEFAULT 'Iniciante',
+  categoria VARCHAR(40) NOT NULL DEFAULT 'Força',
+  instrucoes TEXT NOT NULL,
+  observacoes TEXT NULL,
+  imagem_url VARCHAR(500) NULL,
+  video_url VARCHAR(500) NULL,
+  ativo BOOLEAN NOT NULL DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_exercicios_filtros (ativo, musculo, equipamento, nivel, categoria)
+);
+
+INSERT IGNORE INTO exercicios (nome, musculo, secundarios, equipamento, nivel, categoria, instrucoes) VALUES
+('Supino reto', 'Peito', 'Tríceps, Ombros', 'Barra', 'Intermediário', 'Força',
+ 'Deite no banco com os pés firmes no chão.\nSegure a barra um pouco além da largura dos ombros.\nDesça a barra de forma controlada até o meio do peito.\nEmpurre a barra para cima até estender os cotovelos.'),
+('Crucifixo com halteres', 'Peito', 'Ombros', 'Halteres', 'Iniciante', 'Força',
+ 'Deite no banco segurando um halter em cada mão acima do peito.\nAbra os braços em arco, com os cotovelos levemente flexionados.\nDesça até sentir o alongamento do peito.\nFeche o movimento voltando à posição inicial.'),
+('Puxada frontal', 'Costas', 'Bíceps', 'Polia', 'Iniciante', 'Força',
+ 'Sente-se na máquina e ajuste o apoio das coxas.\nSegure a barra com pegada um pouco mais larga que os ombros.\nPuxe a barra até a altura do queixo, levando os cotovelos para baixo.\nRetorne devagar até estender os braços.'),
+('Remada curvada', 'Costas', 'Bíceps, Lombar', 'Barra', 'Intermediário', 'Força',
+ 'Com os joelhos levemente flexionados, incline o tronco à frente mantendo a coluna neutra.\nSegure a barra com os braços estendidos.\nPuxe a barra em direção ao abdômen.\nDesça de forma controlada.'),
+('Agachamento livre', 'Pernas', 'Glúteos, Lombar', 'Barra', 'Intermediário', 'Força',
+ 'Posicione a barra sobre a parte alta das costas.\nAfaste os pés na largura dos ombros.\nDesça flexionando quadris e joelhos até a altura confortável.\nSuba empurrando o chão com os pés.'),
+('Leg press 45°', 'Pernas', 'Glúteos', 'Máquina', 'Iniciante', 'Força',
+ 'Sente-se com as costas apoiadas e os pés na plataforma.\nDestrave o equipamento e desça até os joelhos ficarem flexionados.\nEmpurre a plataforma sem travar totalmente os joelhos.'),
+('Elevação pélvica', 'Glúteos', 'Posterior de coxa', 'Barra', 'Intermediário', 'Força',
+ 'Apoie as costas no banco com a barra sobre o quadril.\nPosicione os pés firmes no chão.\nEleve o quadril até alinhar tronco e coxas.\nDesça de forma controlada.'),
+('Desenvolvimento com halteres', 'Ombros', 'Tríceps', 'Halteres', 'Intermediário', 'Força',
+ 'Sentado, segure os halteres na altura dos ombros.\nEmpurre os halteres para cima até estender os braços.\nDesça devagar até a posição inicial.'),
+('Elevação lateral', 'Ombros', '', 'Halteres', 'Iniciante', 'Força',
+ 'Em pé, segure um halter em cada mão ao lado do corpo.\nEleve os braços lateralmente até a altura dos ombros.\nDesça de forma controlada, sem balançar o tronco.'),
+('Rosca direta', 'Bíceps', 'Antebraço', 'Barra', 'Iniciante', 'Força',
+ 'Em pé, segure a barra com as palmas voltadas para cima.\nFlexione os cotovelos levando a barra até os ombros.\nDesça devagar mantendo os cotovelos junto ao corpo.'),
+('Tríceps na polia', 'Tríceps', '', 'Polia', 'Iniciante', 'Força',
+ 'Em pé, segure a barra ou corda na polia alta.\nMantenha os cotovelos junto ao corpo.\nEstenda os cotovelos empurrando a barra para baixo.\nRetorne devagar.'),
+('Prancha abdominal', 'Abdômen', 'Ombros, Lombar', 'Peso corporal', 'Iniciante', 'Funcional',
+ 'Apoie antebraços e pontas dos pés no chão.\nMantenha o corpo alinhado da cabeça aos calcanhares.\nContraia o abdômen e sustente a posição pelo tempo definido.');
