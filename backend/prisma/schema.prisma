@@ -47,3 +47,27 @@ enum usuarios_papel {
   monitor
   admin
 }
+model exercicios {
+  id            Int               @id @default(autoincrement())
+  nome          String            @unique(map: "nome") @db.VarChar(150)
+  musculo       String            @db.VarChar(60)
+  secundarios   String            @default("") @db.VarChar(200)
+  equipamento   String            @db.VarChar(60)
+  nivel         exercicios_nivel  @default(Iniciante)
+  categoria     String            @default("Força") @db.VarChar(40)
+  instrucoes    String            @db.Text
+  observacoes   String?           @db.Text
+  imagem_url    String?           @db.VarChar(500)
+  video_url     String?           @db.VarChar(500)
+  ativo         Boolean           @default(true)
+  criado_em     DateTime?         @default(now()) @db.Timestamp(0)
+  atualizado_em DateTime?         @default(now()) @db.Timestamp(0)
+
+  @@index([ativo, musculo, equipamento, nivel, categoria], map: "idx_exercicios_filtros")
+}
+
+enum exercicios_nivel {
+  Iniciante
+  Intermediario @map("Intermediário")
+  Avancado      @map("Avançado")
+}
