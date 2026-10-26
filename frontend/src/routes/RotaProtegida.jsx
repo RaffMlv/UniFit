@@ -1,4 +1,5 @@
 import { Navigate } from 'react-router-dom'
+import { rotaInicial } from './rotaInicial'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function RotaProtegida({ children, roles, ignorarTriagem = false }) {
@@ -9,7 +10,7 @@ export default function RotaProtegida({ children, roles, ignorarTriagem = false 
   if (usuario.papel === 'aluno' && !usuario.triagemConcluida && !ignorarTriagem) {
     return <Navigate to="/triagem" replace />
   }
-  if (roles && !roles.includes(usuario.papel)) return <Navigate to="/inicio" replace />
+  if (roles && !roles.includes(usuario.papel)) return <Navigate to= {rotaInicial(usuario.papel)}replace />
 
   return children
 }

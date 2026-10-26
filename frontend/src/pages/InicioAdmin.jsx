@@ -1,36 +1,5 @@
-import {
-  Activity,
-  CalendarDays,
-  ClipboardCheck,
-  ClipboardList,
-  Clock,
-  CreditCard,
-  Dumbbell,
-  Home,
-  Library,
-  Settings,
-  Stethoscope,
-  TriangleAlert,
-  User,
-  Users,
-  Wrench,
-} from 'lucide-react'
+import { Activity, ClipboardCheck, ClipboardList, Clock, Users, Home, Dumbbell, Library, CalendarDays, Wrench } from 'lucide-react'
 import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
-
-const menuAdmin = [
-  { nome: 'Página inicial', icone: Home, rota: '/inicio-admin' },
-  { nome: 'Treinos', icone: Dumbbell, rota: null },
-  { nome: 'Alunos', icone: Users, rota: null },
-  { nome: 'Biblioteca de exercícios', icone: Library, rota: null },
-  { nome: 'Agenda', icone: CalendarDays, rota: null },
-  { nome: 'Exercícios', icone: Activity, rota: null },
-  { nome: 'Equipamentos', icone: Wrench, rota: null },
-  { nome: 'Aulas', icone: Users, rota: null },
-  { nome: 'Atendimentos', icone: Stethoscope, rota: null },
-  { nome: 'Finanças', icone: CreditCard, rota: null },
-  { nome: 'Perfil', icone: User, rota: null },
-  { nome: 'Configurações', icone: Settings, rota: null },
-]
 
 const indicadores = [
   { titulo: 'Alunos ativos', valor: null, icone: Users },
@@ -43,9 +12,7 @@ const indicadores = [
 export default function InicioAdmin() {
   return (
     <LayoutAutenticado
-      titulo="Dashboard do Administrador"
-      menu={menuAdmin}
-    >
+      titulo="Dashboard do Administrador">
       <section className="mb-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-heading text-3xl font-bold text-[#142191] sm:text-4xl">
