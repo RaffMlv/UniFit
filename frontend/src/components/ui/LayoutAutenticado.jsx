@@ -24,10 +24,10 @@ const MENU = [
 const MENU_ADMIN = [
   { nome: 'Página inicial', icone: Home, rota: '/inicio-admin' },
   { nome: 'Treinos', icone: Dumbbell, rota: null },
-  { nome: 'Alunos', icone: Users, rota: null },
+  { nome: 'Alunos', icone: Users, rota: '/admin/alunos' },
   { nome: 'Biblioteca de exercícios', icone: Library, rota: null },
   { nome: 'Agenda', icone: CalendarDays, rota: null },
-  { nome: 'Exercícios', icone: Activity, rota: null },
+  { nome: 'Gerenciar Exercícios', icone: Activity, rota: '/admin/exercicios' },
   { nome: 'Equipamentos', icone: Wrench, rota: null },
   { nome: 'Aulas', icone: Users, rota: null },
   { nome: 'Atendimentos', icone: Stethoscope, rota: null },

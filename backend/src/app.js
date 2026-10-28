@@ -6,6 +6,7 @@ import ratelimit from 'express-rate-limit'
 import authRoutes from './routes/auth.routes.js'
 import triagemRoutes from './routes/triagem.routes.js'
 import exerciciosRoutes from './routes/exercicios.rotes.js'
+import adminAlunosRoutes from './routes/admin.alunos.routes.js'
 
 const app = express()
 app.use(helmet())
@@ -22,5 +23,6 @@ app.use((err, req, res, next) => {
     console.error(err.stack)
     res.status(500).json({ error: 'Erro interno do servidor.' })
 })
+app.use('/api/admin/alunos', adminAlunosRoutes)
 
 export default app

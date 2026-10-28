@@ -11,6 +11,9 @@ import Biblioteca from './pages/Biblioteca'
 import RotaProtegida from '@/routes/RotaProtegida'
 import InicioAdmin from '@/pages/InicioAdmin'
 import PaginaExercicio from '@/pages/PaginaExercicio'
+import AdminExercicios from './pages/AdminExercicio'
+import AdminAlunos from './pages/AdminAlunos'
+import AdminAlunoDetalhe from './pages/AdminAlunoDetalhe'
 import { rotaInicial } from './routes/rotaInicial'
 import { useAuth } from '@/contexts/AuthContext'
 import { api } from '@/services/api'
@@ -53,6 +56,15 @@ export default function App() {
       <Route path="/biblioteca" element={<RotaProtegida><Biblioteca /></RotaProtegida>} />
       <Route path="/perfil" element={<RotaProtegida><Perfil /></RotaProtegida>} />
       <Route path="/exercicios/:id" element={<RotaProtegida><PaginaExercicio /></RotaProtegida>} />
+      <Route path="/admin/exercicios" element={
+      <RotaProtegida roles={['admin']}><AdminExercicios /></RotaProtegida>
+      } />
+      <Route path="/admin/alunos" element={
+      <RotaProtegida roles={['admin']}><AdminAlunos /></RotaProtegida>
+      } />
+      <Route path="/admin/alunos/:id" element={
+        <RotaProtegida roles={['admin']}><AdminAlunoDetalhe /></RotaProtegida>
+      } />
     </Routes>
   )
 }
