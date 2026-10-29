@@ -13,11 +13,11 @@ const MENU = [
   { nome: 'Meus treinos', icone: Dumbbell, rota: null },
   { nome: 'Exercícios', icone: Activity, rota: '/biblioteca' },
   { nome: 'Progresso', icone: TrendingUp, rota: null },
-  { nome: 'Aulas', icone: Users, rota: null },
+  { nome: 'Aulas', icone: Users, rota: '/aulas' },
   { nome: 'Agendamentos', icone: CalendarCheck, rota: '/agendamentos' },
   { nome: 'Consulta', icone: Stethoscope, rota: null },
   { nome: 'Acompanhamentos', icone: HeartPulse, rota: null },
-  { nome: 'Agenda', icone: CalendarDays, rota: null },
+  { nome: 'Agenda', icone: CalendarDays, rota: '/agenda' },
   { nome: 'Financeiro', icone: CreditCard, rota: '/financeiro' },
 ]
 

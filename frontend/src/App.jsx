@@ -14,6 +14,8 @@ import PaginaExercicio from '@/pages/PaginaExercicio'
 import AdminExercicios from './pages/AdminExercicio'
 import AdminAlunos from './pages/AdminAlunos'
 import AdminAlunoDetalhe from './pages/AdminAlunoDetalhe'
+import Aulas from '@/pages/Aulas'
+import Agenda from '@/pages/Agenda'
 import { rotaInicial } from './routes/rotaInicial'
 import { useAuth } from '@/contexts/AuthContext'
 import { api } from '@/services/api'
@@ -57,14 +59,13 @@ export default function App() {
       <Route path="/perfil" element={<RotaProtegida><Perfil /></RotaProtegida>} />
       <Route path="/exercicios/:id" element={<RotaProtegida><PaginaExercicio /></RotaProtegida>} />
       <Route path="/admin/exercicios" element={
-      <RotaProtegida roles={['admin']}><AdminExercicios /></RotaProtegida>
-      } />
+      <RotaProtegida roles={['admin']}><AdminExercicios /></RotaProtegida>} />
       <Route path="/admin/alunos" element={
-      <RotaProtegida roles={['admin']}><AdminAlunos /></RotaProtegida>
-      } />
+      <RotaProtegida roles={['admin']}><AdminAlunos /></RotaProtegida>} />
       <Route path="/admin/alunos/:id" element={
-        <RotaProtegida roles={['admin']}><AdminAlunoDetalhe /></RotaProtegida>
-      } />
+        <RotaProtegida roles={['admin']}><AdminAlunoDetalhe /></RotaProtegida>} />
+      <Route path="/aulas" element={<RotaProtegida roles={['aluno']}><Aulas /></RotaProtegida>} />
+      <Route path="/agenda" element={<RotaProtegida roles={['aluno']}><Agenda /></RotaProtegida>} />
     </Routes>
   )
 }
