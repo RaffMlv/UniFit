@@ -57,7 +57,7 @@ export default function Perfil() {
           <div className="grid gap-5 sm:grid-cols-2">
             <Dado icone={UserRound} rotulo="Nome completo" valor={usuario?.nome} />
             <Dado icone={IdCard} rotulo="CPF" valor={mascararCpf(usuario?.cpf)} /> 
-            <Dado icone={Mail} rotulo="E-mail institucional" valor={usuario?.email} />
+            <Dado icone={Mail} rotulo="E-mail" valor={usuario?.email} />
             <label className="block">
               <span className="mb-2 flex items-center gap-2 text-sm font-semibold"><Phone size={16} /> Telefone</span>
               <input value={telefone} onChange={e => setTelefone(e.target.value)} disabled={!editando} type="tel" placeholder="Não informado" className="w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm text-slate-800 outline-none focus:border-[#004AF7] disabled:bg-slate-50" />

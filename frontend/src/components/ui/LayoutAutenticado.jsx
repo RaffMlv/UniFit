@@ -3,7 +3,8 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import {
   Activity, Bell, CalendarCheck, CalendarDays, ChevronDown, CreditCard,
   Dumbbell, HeartPulse, Home, LogOut, Menu, Settings, Stethoscope,
-  TrendingUp, User, Users, X, Library, Wrench
+  TrendingUp, User, Users, X, Library, Wrench, UserRound, ClipboardList,
+  FileSpreadsheet
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -23,15 +24,15 @@ const MENU = [
 
 const MENU_ADMIN = [
   { nome: 'Página inicial', icone: Home, rota: '/inicio-admin' },
-  { nome: 'Treinos', icone: Dumbbell, rota: null },
   { nome: 'Alunos', icone: Users, rota: '/admin/alunos' },
-  { nome: 'Biblioteca de exercícios', icone: Library, rota: null },
-  { nome: 'Agenda', icone: CalendarDays, rota: null },
+  { nome: 'Monitores', icone: UserRound, rota: null },
+  { nome: 'Gerenciar Treinos', icone: Dumbbell, rota: null },
   { nome: 'Gerenciar Exercícios', icone: Activity, rota: '/admin/exercicios' },
-  { nome: 'Equipamentos', icone: Wrench, rota: null },
-  { nome: 'Aulas', icone: Users, rota: null },
-  { nome: 'Atendimentos', icone: Stethoscope, rota: null },
-  { nome: 'Finanças', icone: CreditCard, rota: null },
+  { nome: 'Gerenciar Equipamentos', icone: Wrench, rota: null },
+  { nome: 'Gerenciar Aulas', icone: Users, rota: null },
+  { nome: 'Gerenciar Atendimentos', icone: Stethoscope, rota: null },
+  { nome: 'Financeiro', icone: CreditCard, rota: null },
+  { nome: 'Relatórios', icone: FileSpreadsheet, rota: null },
   
 ]
 
