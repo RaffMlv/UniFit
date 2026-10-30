@@ -2,7 +2,11 @@ import jwt from 'jsonwebtoken'
 import { pool } from '../config/db.js'
 
 export async function autenticar(req, res, next) {
-  const token = req.cookies?.token
+  const authorization = req.get('authorization')
+  const bearerToken = authorization?.startsWith('Bearer ')
+    ? authorization.slice(7).trim()
+    : null
+  const token = req.cookies?.token || bearerToken
   if (!token) return res.status(401).json({ erro: 'Não autenticado' })
 
   let dados
@@ -43,14 +47,14 @@ export const autorizar = (...papeis) => (req, res, next) => {
   next()
 }
 
-export const autorizarEspecialidade = (...especialidade) => (req, res, next) => {
-  const { papel, especialidade } = req.usuario
+export const autorizarEspecialidade = (...especialidadesPermitidas) => (req, res, next) => {
+    const { papel, especialidade } = req.usuario
 
-  // admin passa por cima da regra de especialidade
-  if (papel === 'admin') return next()
+    if (papel === 'admin') return next()
 
-  if (papel !== 'monitor' || !especialidade.includes(especialidade)) {
-    return res.status(403).json({ erro: 'Sem permissão para esta ação' })
-  }
-  next()
+    if (papel !== 'monitor' || !especialidadesPermitidas.includes(especialidade)) {
+        return res.status(403).json({ erro: 'Funcionalidade não autorizada: Sem permissão para esta ação' })
+    }
+
+    next()
 }

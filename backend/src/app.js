@@ -9,6 +9,7 @@ import exerciciosRoutes from './routes/exercicios.rotes.js'
 import adminAlunosRoutes from './routes/admin.alunos.routes.js'
 import fichasRoutes from './routes/fichas.routes.js'
 import adminProfissionaisRoutes from './routes/admin.profissionais.routes.js';
+import vinculosRoutes from './routes/vinculos.routes.js'
 const app = express()
 app.use(helmet())
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }))
@@ -22,6 +23,7 @@ app.use('/api/exercicios', exerciciosRoutes)
 app.use('/api/admin/alunos', adminAlunosRoutes)
 app.use('/api/fichas', fichasRoutes)
 app.use('/api/admin/profissionais', adminProfissionaisRoutes)
+app.use('/api/vinculos', vinculosRoutes)
 
 // Deve ficar depois de todas as rotas.
 app.use((err, req, res, next) => {
