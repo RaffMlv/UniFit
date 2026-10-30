@@ -7,6 +7,8 @@ import Inicio from '@/pages/Inicio'
 import Financeiro from './pages/Financeiro'
 import Perfil from './pages/Perfil'
 import Agendamento from './pages/Agendamento'
+import Agenda from './pages/Agenda'
+import Progresso from './pages/Progresso'
 import Biblioteca from './pages/Biblioteca'
 import RotaProtegida from '@/routes/RotaProtegida'
 import InicioAdmin from '@/pages/InicioAdmin'
@@ -16,6 +18,7 @@ import AdminAlunos from './pages/AdminAlunos'
 import AdminAlunoDetalhe from './pages/AdminAlunoDetalhe'
 import MeusTreinos from './pages/MeusTreinos'
 import EditarFicha from './pages/EditarFicha'
+import AdminEquipamentos from './pages/AdminEquipamentos'
 import { rotaInicial } from './routes/rotaInicial'
 import { useAuth } from '@/contexts/AuthContext'
 import { api } from '@/services/api'
@@ -49,6 +52,8 @@ export default function App() {
       <Route path="*" element={<RedirecionarInicio />} />
       <Route path="/financeiro" element={<RotaProtegida roles={['aluno']}><Financeiro /></RotaProtegida>} />
       <Route path="/agendamentos" element={<RotaProtegida><Agendamento /></RotaProtegida>} />
+      <Route path="/agenda" element={<RotaProtegida roles={['aluno']}><Agenda /></RotaProtegida>} />
+      <Route path="/progresso" element={<RotaProtegida roles={['aluno']}><Progresso /></RotaProtegida>} />
       <Route path="/biblioteca" element={<RotaProtegida><Biblioteca /></RotaProtegida>} />
       <Route path="/perfil" element={<RotaProtegida><Perfil /></RotaProtegida>} />
       <Route path="/exercicios/:id" element={<RotaProtegida><PaginaExercicio /></RotaProtegida>} />
@@ -61,9 +66,13 @@ export default function App() {
       <Route path="/admin/alunos/:id" element={
         <RotaProtegida roles={['admin']}><AdminAlunoDetalhe /></RotaProtegida>
       } />
+      <Route path="/admin/equipamentos" element={
+        <RotaProtegida roles={['admin']}><AdminEquipamentos /></RotaProtegida>
+      } />
       <Route path="/meus-treinos" element={<RotaProtegida roles={['aluno']}><MeusTreinos /></RotaProtegida>} />
       <Route path="/fichas/nova/:alunoId" element={<RotaProtegida roles={['monitor', 'admin']}><EditarFicha /></RotaProtegida>} />
       <Route path="/fichas/:id/editar" element={<RotaProtegida roles={['monitor', 'admin']}><EditarFicha /></RotaProtegida>} />
+      
     </Routes>
   )
 }
