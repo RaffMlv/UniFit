@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { pool } from '../config/db.js'
-import { autenticar, autorizar } from '../middlewares/auth.js'
+import { autenticar, autorizar, autorizarEspecialidade } from '../middlewares/auth.js'
 
 const router = Router()
 router.use(autenticar)
@@ -131,7 +131,7 @@ router.get('/minhas', autorizar('aluno'), async (req, res) => {
 // altera a ficha de qualquer aluno. Fechar isso na Sprint 3 (RF23.7).
 
 // Dados do aluno e todas as fichas dele (rascunhos inclusos)
-router.get('/aluno/:alunoId', autorizar('monitor', 'admin'), async (req, res) => {
+router.get('/aluno/:alunoId', autorizar('monitor', 'admin'), autorizarEspecialidade('educacao-fisica'), async (req, res) => {
   const alunoId = lerId(req, 'alunoId')
   if (!alunoId) return res.status(404).json({ erro: 'Aluno não encontrado' })
   const [alunos] = await pool.query(

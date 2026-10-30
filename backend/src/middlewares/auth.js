@@ -14,11 +14,26 @@ export async function autenticar(req, res, next) {
 
   // Confere no banco: bloqueia desativados e usa o papel atual (não o do token).
   const [rows] = await pool.query(
-    'SELECT papel FROM usuarios WHERE id = ? AND ativo = TRUE', [dados.id])
-  if (!rows[0]) return res.status(401).json({ erro: 'Sessão inválida ou expirada' })
+    `SELECT papel, especialidade, registro_profissional
+     FROM usuarios
+     WHERE id = ? AND ativo = TRUE`,
+    [dados.id]
+  );
 
-  req.usuario = { id: dados.id, papel: rows[0].papel }
-  next()
+  if (!rows[0]) {
+      return res.status(401).json({
+          erro: 'Sessão inválida ou expirada'
+      });
+  }
+
+  req.usuario = {
+      id: dados.id,
+      papel: rows[0].papel,
+      especialidade: rows[0].especialidade,
+      registro_profissional: rows[0].registro_profissional
+  };
+
+  next();
 }
 
 export const autorizar = (...papeis) => (req, res, next) => {
@@ -28,13 +43,13 @@ export const autorizar = (...papeis) => (req, res, next) => {
   next()
 }
 
-export const autorizarEspecialidade = (...especialidades) => (req, res, next) => {
+export const autorizarEspecialidade = (...especialidade) => (req, res, next) => {
   const { papel, especialidade } = req.usuario
 
   // admin passa por cima da regra de especialidade
   if (papel === 'admin') return next()
 
-  if (papel !== 'monitor' || !especialidades.includes(especialidade)) {
+  if (papel !== 'monitor' || !especialidade.includes(especialidade)) {
     return res.status(403).json({ erro: 'Sem permissão para esta ação' })
   }
   next()

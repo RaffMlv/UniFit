@@ -58,8 +58,16 @@ router.post('/login', async (req, res) => {
 
   // Aceita CPF com ou sem pontuação, ou e-mail. Só entra quem está ativo.
   const [rows] = await pool.query(
-    `SELECT id, nome, senha_hash, papel FROM usuarios
-     WHERE (cpf = ? OR email = ?) AND ativo = TRUE`,
+        `SELECT
+        id,
+        nome,
+        senha_hash,
+        papel,
+        especialidade,
+        registro_profissional
+    FROM usuarios
+    WHERE (cpf = ? OR email = ?)
+    AND ativo = TRUE`,
     [somenteDigitos(login), String(login).trim()])
   const usuario = rows[0]
   const senhaValida = usuario ? await bcrypt.compare(String(senha), usuario.senha_hash) : false
