@@ -11,7 +11,7 @@ import { useAuth } from '@/contexts/AuthContext'
 // rota: null = a página ainda não existe e o item aparece como "Em breve".
 const MENU = [
   { nome: 'Página inicial', icone: Home, rota: '/inicio' },
-  { nome: 'Meus treinos', icone: Dumbbell, rota: null },
+  { nome: 'Meus treinos', icone: Dumbbell, rota: '/meus-treinos' },
   { nome: 'Exercícios', icone: Activity, rota: '/biblioteca' },
   { nome: 'Progresso', icone: TrendingUp, rota: null },
   { nome: 'Aulas', icone: Users, rota: null },

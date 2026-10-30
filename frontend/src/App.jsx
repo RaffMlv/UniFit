@@ -14,6 +14,8 @@ import PaginaExercicio from '@/pages/PaginaExercicio'
 import AdminExercicios from './pages/AdminExercicio'
 import AdminAlunos from './pages/AdminAlunos'
 import AdminAlunoDetalhe from './pages/AdminAlunoDetalhe'
+import MeusTreinos from './pages/MeusTreinos'
+import EditarFicha from './pages/EditarFicha'
 import { rotaInicial } from './routes/rotaInicial'
 import { useAuth } from '@/contexts/AuthContext'
 import { api } from '@/services/api'
@@ -65,6 +67,9 @@ export default function App() {
       <Route path="/admin/alunos/:id" element={
         <RotaProtegida roles={['admin']}><AdminAlunoDetalhe /></RotaProtegida>
       } />
+      <Route path="/meus-treinos" element={<RotaProtegida roles={['aluno']}><MeusTreinos /></RotaProtegida>} />
+      <Route path="/fichas/nova/:alunoId" element={<RotaProtegida roles={['monitor', 'admin']}><EditarFicha /></RotaProtegida>} />
+      <Route path="/fichas/:id/editar" element={<RotaProtegida roles={['monitor', 'admin']}><EditarFicha /></RotaProtegida>} />
     </Routes>
   )
 }

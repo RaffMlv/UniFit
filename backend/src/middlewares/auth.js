@@ -27,3 +27,10 @@ export const autorizar = (...papeis) => (req, res, next) => {
   }
   next()
 }
+
+export const autorizarEspecialidade = (...especialidades) => (req, res, next) => {
+  if(!especialidades.includes(req.usuario.especialidades)){
+    return res.status(403).json({ erro: 'Sem permissão para esta ação' })
+  }
+  next();
+}

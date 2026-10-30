@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useLocation } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, CircleAlert, Dumbbell, ImageOff, PlayCircle } from 'lucide-react'
 import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
 import { api } from '@/services/api'
@@ -10,6 +10,9 @@ const ehArquivoDeVideo = (url) => /\.(mp4|webm|ogg)(\?.*)?$/i.test(url ?? '')
 
 export default function PaginaExercicio() {
   const { id } = useParams()
+  const { state } = useLocation()
+  const voltarPara = state?.de ?? '/biblioteca'
+  const rotuloVoltar = state?.rotulo ?? 'Voltar à biblioteca'
   const [exercicio, setExercicio] = useState(null)
   const [relacionados, setRelacionados] = useState([])
   const [carregando, setCarregando] = useState(true)
@@ -47,8 +50,8 @@ export default function PaginaExercicio() {
   return (
     <LayoutAutenticado titulo="Exercício">
       <div className="space-y-6">
-        <Link to="/biblioteca" className="inline-flex items-center gap-2 text-sm font-semibold text-[#004AF7] hover:underline">
-          <ArrowLeft size={18} aria-hidden="true" /> Voltar à biblioteca
+        <Link to={voltarPara} className="inline-flex items-center gap-2 text-sm font-semibold text-[#004AF7] hover:underline">
+          <ArrowLeft size={18} aria-hidden="true" /> {rotuloVoltar}
         </Link>
 
         {carregando && <div className="rounded-xl bg-white p-8 text-[#142191]">Carregando exercício...</div>}
