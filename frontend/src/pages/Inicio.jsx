@@ -1,8 +1,9 @@
 import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
 import { useAuth } from '@/contexts/AuthContext'
+import { Link } from 'react-router-dom'
 
 const funcionalidades = [
-  { nome: 'Meus treinos', descricao: 'Veja sua rotina de exercícios' },
+  { nome: 'Meus treinos', descricao: 'Veja sua rotina de exercícios', rota: '/meus-treinos' },
   { nome: 'Aulas', descricao: 'Organize seus horários' },
   { nome: 'Minha evolução', descricao: 'Acompanhe seu desempenho' },
   { nome: 'Exercícios', descricao: 'Conheça novos exercícios' },
@@ -43,9 +44,16 @@ export default function Inicio() {
             <article key={item.nome} className="rounded-2xl bg-white p-6 shadow-sm">
               <h3 className="font-heading text-xl font-bold text-[#142191]">{item.nome}</h3>
               <p className="mt-2 text-sm text-slate-600">{item.descricao}</p>
-              <span className="mt-4 inline-block rounded-full bg-[#E4F2FD] px-3 py-1 text-xs font-semibold text-[#142191]">
-                Em breve
-              </span>
+              {item.rota ? (
+                <Link to={item.rota}
+                  className="mt-4 inline-block rounded-lg bg-[#004AF7] px-4 py-2 text-sm font-semibold text-white hover:bg-[#142191]">
+                  Abrir treinos
+                </Link>
+              ) : (
+                <span className="mt-4 inline-block rounded-full bg-[#E4F2FD] px-3 py-1 text-xs font-semibold text-[#142191]">
+                  Em breve
+                </span>
+              )}
             </article>
           ))}
         </div>

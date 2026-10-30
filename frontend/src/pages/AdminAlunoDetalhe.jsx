@@ -86,7 +86,7 @@ export default function AdminAlunoDetalhe() {
             </section>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <section className="rounded-2xl bg-white p-6 shadow-sm">
+              <section className="rounded-2xl bg-white p-6 shadow-sm md:col-span-2">
                 <h3 className="font-heading text-2xl font-bold text-[#142191]">DADOS CADASTRAIS</h3>
                 <dl className="mt-3">
                   <Linha rotulo="CPF" valor={aluno.cpf} />
@@ -121,10 +121,38 @@ export default function AdminAlunoDetalhe() {
                 <h3 className="font-heading text-2xl font-bold text-[#142191]">ACOMPANHAMENTO</h3>
                 <p className="mt-3 text-sm text-slate-600">Nenhum monitor vinculado ainda.</p>
               </section>
+
+              <SecaoFichas alunoId={aluno.id} />
             </div>
           </>
         )}
       </div>
     </LayoutAutenticado>
+  )
+}
+
+function SecaoFichas({ alunoId }) {
+  const [fichas, setFichas] = useState(null)
+  useEffect(() => {
+    api(`/fichas/aluno/${alunoId}`).then((d) => setFichas(d.fichas)).catch(() => setFichas([]))
+  }, [alunoId])
+
+  return (
+    <section className="rounded-2xl bg-white p-6 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="font-heading text-2xl font-bold text-[#142191]">FICHAS DE TREINO</h3>
+        <Link to={`/fichas/nova/${alunoId}`} className="rounded-lg bg-[#004AF7] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#142191]">Criar ficha</Link>
+      </div>
+      {fichas === null && <p className="mt-3 text-sm text-slate-600">Carregando...</p>}
+      {fichas?.length === 0 && <p className="mt-3 text-sm text-slate-600">Nenhuma ficha criada para este aluno.</p>}
+      <ul className="mt-3 divide-y divide-slate-100">
+        {fichas?.map((f) => (
+          <li key={f.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
+            <span><strong className="text-[#142191]">{f.nome}</strong> · {f.objetivo} · {f.status === 'publicada' ? 'Publicada' : 'Rascunho'}</span>
+            <Link to={`/fichas/${f.id}/editar`} className="font-semibold text-[#004AF7] hover:underline">Editar</Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }

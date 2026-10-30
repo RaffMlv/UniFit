@@ -14,10 +14,8 @@ import PaginaExercicio from '@/pages/PaginaExercicio'
 import AdminExercicios from './pages/AdminExercicio'
 import AdminAlunos from './pages/AdminAlunos'
 import AdminAlunoDetalhe from './pages/AdminAlunoDetalhe'
-import Aulas from '@/pages/Aulas'
-import Agenda from '@/pages/Agenda'
-import AdminEquipamentos from '@/pages/AdminEquipamentos'
-import Progresso from '@/pages/Progresso'
+import MeusTreinos from './pages/MeusTreinos'
+import EditarFicha from './pages/EditarFicha'
 import { rotaInicial } from './routes/rotaInicial'
 import { useAuth } from '@/contexts/AuthContext'
 import { api } from '@/services/api'
@@ -54,13 +52,18 @@ export default function App() {
       <Route path="/biblioteca" element={<RotaProtegida><Biblioteca /></RotaProtegida>} />
       <Route path="/perfil" element={<RotaProtegida><Perfil /></RotaProtegida>} />
       <Route path="/exercicios/:id" element={<RotaProtegida><PaginaExercicio /></RotaProtegida>} />
-      <Route path="/admin/exercicios" element={<RotaProtegida roles={['admin']}><AdminExercicios /></RotaProtegida>} />
-      <Route path="/admin/alunos" element={<RotaProtegida roles={['admin']}><AdminAlunos /></RotaProtegida>} />
-      <Route path="/admin/alunos/:id" element={<RotaProtegida roles={['admin']}><AdminAlunoDetalhe /></RotaProtegida>} />
-      <Route path="/aulas" element={<RotaProtegida roles={['aluno']}><Aulas /></RotaProtegida>} />
-      <Route path="/agenda" element={<RotaProtegida roles={['aluno']}><Agenda /></RotaProtegida>} />
-      <Route path="/admin/equipamentos" element={<RotaProtegida roles={['admin']}><AdminEquipamentos /></RotaProtegida>}/>
-      <Route path="/progresso" element={<RotaProtegida roles={['aluno']}><Progresso /></RotaProtegida>}/>
+      <Route path="/admin/exercicios" element={
+      <RotaProtegida roles={['admin']}><AdminExercicios /></RotaProtegida>
+      } />
+      <Route path="/admin/alunos" element={
+      <RotaProtegida roles={['admin']}><AdminAlunos /></RotaProtegida>
+      } />
+      <Route path="/admin/alunos/:id" element={
+        <RotaProtegida roles={['admin']}><AdminAlunoDetalhe /></RotaProtegida>
+      } />
+      <Route path="/meus-treinos" element={<RotaProtegida roles={['aluno']}><MeusTreinos /></RotaProtegida>} />
+      <Route path="/fichas/nova/:alunoId" element={<RotaProtegida roles={['monitor', 'admin']}><EditarFicha /></RotaProtegida>} />
+      <Route path="/fichas/:id/editar" element={<RotaProtegida roles={['monitor', 'admin']}><EditarFicha /></RotaProtegida>} />
     </Routes>
   )
 }

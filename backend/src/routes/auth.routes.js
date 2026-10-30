@@ -66,11 +66,11 @@ router.post('/login', async (req, res) => {
   if (!usuario || !senhaValida) return res.status(401).json({ erro: 'E-mail, CPF ou senha inválidos.' })
 
   const token = jwt.sign(
-    { id: usuario.id, papel: usuario.papel }, process.env.JWT_SECRET, { expiresIn: '8h' })
+    { id: usuario.id, papel: usuario.papel, especialidade: usuario.especialidade }, process.env.JWT_SECRET, { expiresIn: '8h' })
   res.cookie('token', token, cookieOptions)
   res.json({
     message: 'Login realizado com sucesso.',
-    usuario: { id: usuario.id, nome: usuario.nome, papel: usuario.papel },
+    usuario: { id: usuario.id, nome: usuario.nome, papel: usuario.papel, especialidade: usuario.especialidade },
   })
 })
 
@@ -82,7 +82,7 @@ router.post('/logout', (req, res) => {
 
 router.get('/perfil', autenticar, async (req, res) => {
   const [rows] = await pool.query(
-    `SELECT u.id, u.nome, u.cpf, u.email, u.papel,
+    `SELECT u.id, u.nome, u.cpf, u.email, u.papel, u.especialidade,
             t.objetivo AS objetivo,
             t.usuario_id IS NOT NULL AS triagemConcluida
      FROM usuarios u

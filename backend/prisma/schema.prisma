@@ -31,15 +31,97 @@ model triagens {
 }
 
 model usuarios {
-  id         Int            @id @default(autoincrement())
-  nome       String         @db.VarChar(150)
-  cpf        String         @unique(map: "matricula") @db.Char(11)
-  email      String         @unique(map: "email") @db.VarChar(150)
-  senha_hash String         @db.VarChar(255)
-  papel      usuarios_papel @default(aluno)
-  ativo      Boolean        @default(true)
-  criado_em  DateTime?      @default(now()) @db.Timestamp(0)
-  triagens   triagens?
+  id                                                                   Int                       @id @default(autoincrement())
+  nome                                                                 String                    @db.VarChar(150)
+  cpf                                                                  String                    @unique(map: "matricula") @db.Char(11)
+  email                                                                String                    @unique(map: "email") @db.VarChar(150)
+  senha_hash                                                           String                    @db.VarChar(255)
+  papel                                                                usuarios_papel            @default(aluno)
+  ativo                                                                Boolean                   @default(true)
+  criado_em                                                            DateTime?                 @default(now()) @db.Timestamp(0)
+  especialidade                                                        usuarios_especialidade?
+  registro_profissional                                                String?                   @db.VarChar(30)
+  fichas_fichas_aluno_idTousuarios                                     fichas[]                  @relation("fichas_aluno_idTousuarios")
+  fichas_fichas_criada_porTousuarios                                   fichas[]                  @relation("fichas_criada_porTousuarios")
+  triagens                                                             triagens?
+  vinculos_acompanhamento_vinculos_acompanhamento_aluno_idTousuarios   vinculos_acompanhamento[] @relation("vinculos_acompanhamento_aluno_idTousuarios")
+  vinculos_acompanhamento_vinculos_acompanhamento_monitor_idTousuarios vinculos_acompanhamento[] @relation("vinculos_acompanhamento_monitor_idTousuarios")
+}
+
+model exercicios {
+  id               Int                @id @default(autoincrement())
+  nome             String             @unique(map: "nome") @db.VarChar(150)
+  musculo          String             @db.VarChar(60)
+  secundarios      String             @default("") @db.VarChar(200)
+  equipamento      String             @db.VarChar(60)
+  nivel            exercicios_nivel   @default(Iniciante)
+  categoria        String             @default("Força") @db.VarChar(40)
+  instrucoes       String             @db.Text
+  observacoes      String?            @db.Text
+  imagem_url       String?            @db.VarChar(500)
+  video_url        String?            @db.VarChar(500)
+  ativo            Boolean            @default(true)
+  criado_em        DateTime?          @default(now()) @db.Timestamp(0)
+  atualizado_em    DateTime?          @default(now()) @db.Timestamp(0)
+  ficha_exercicios ficha_exercicios[]
+
+  @@index([ativo, musculo, equipamento, nivel, categoria], map: "idx_exercicios_filtros")
+}
+
+model vinculos_acompanhamento {
+  id                                                    Int       @id @default(autoincrement())
+  aluno_id                                              Int
+  monitor_id                                            Int
+  criado_em                                             DateTime? @default(now()) @db.Timestamp(0)
+  usuarios_vinculos_acompanhamento_aluno_idTousuarios   usuarios  @relation("vinculos_acompanhamento_aluno_idTousuarios", fields: [aluno_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_vinculo_aluno")
+  usuarios_vinculos_acompanhamento_monitor_idTousuarios usuarios  @relation("vinculos_acompanhamento_monitor_idTousuarios", fields: [monitor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_vinculo_monitor")
+
+  @@unique([aluno_id, monitor_id], map: "uq_vinculo")
+  @@index([monitor_id], map: "idx_vinculo_monitor")
+}
+
+model ficha_divisoes {
+  id               Int                @id @default(autoincrement())
+  ficha_id         Int
+  letra            String             @db.Char(1)
+  fichas           fichas             @relation(fields: [ficha_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_divisao_ficha")
+  ficha_exercicios ficha_exercicios[]
+
+  @@unique([ficha_id, letra], map: "uq_ficha_letra")
+}
+
+model ficha_exercicios {
+  id             Int            @id @default(autoincrement())
+  divisao_id     Int
+  exercicio_id   Int
+  ordem          Int
+  series         Int
+  repeticoes     Int
+  carga_kg       Decimal?       @db.Decimal(5, 1)
+  descanso_seg   Int            @default(60)
+  observacoes    String         @default("") @db.VarChar(500)
+  ficha_divisoes ficha_divisoes @relation(fields: [divisao_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_fe_divisao")
+  exercicios     exercicios     @relation(fields: [exercicio_id], references: [id], onUpdate: NoAction, map: "fk_fe_exercicio")
+
+  @@index([exercicio_id], map: "fk_fe_exercicio")
+  @@index([divisao_id, ordem], map: "idx_fe_divisao_ordem")
+}
+
+model fichas {
+  id                                   Int              @id @default(autoincrement())
+  aluno_id                             Int
+  criada_por                           Int
+  nome                                 String           @db.VarChar(120)
+  objetivo                             String           @db.VarChar(100)
+  status                               fichas_status    @default(rascunho)
+  criado_em                            DateTime?        @default(now()) @db.Timestamp(0)
+  atualizado_em                        DateTime?        @default(now()) @db.Timestamp(0)
+  ficha_divisoes                       ficha_divisoes[]
+  usuarios_fichas_aluno_idTousuarios   usuarios         @relation("fichas_aluno_idTousuarios", fields: [aluno_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ficha_aluno")
+  usuarios_fichas_criada_porTousuarios usuarios         @relation("fichas_criada_porTousuarios", fields: [criada_por], references: [id], onUpdate: NoAction, map: "fk_ficha_autor")
+
+  @@index([criada_por], map: "fk_ficha_autor")
+  @@index([aluno_id, status], map: "idx_fichas_aluno_status")
 }
 
 enum usuarios_papel {
@@ -47,27 +129,20 @@ enum usuarios_papel {
   monitor
   admin
 }
-model exercicios {
-  id            Int               @id @default(autoincrement())
-  nome          String            @unique(map: "nome") @db.VarChar(150)
-  musculo       String            @db.VarChar(60)
-  secundarios   String            @default("") @db.VarChar(200)
-  equipamento   String            @db.VarChar(60)
-  nivel         exercicios_nivel  @default(Iniciante)
-  categoria     String            @default("Força") @db.VarChar(40)
-  instrucoes    String            @db.Text
-  observacoes   String?           @db.Text
-  imagem_url    String?           @db.VarChar(500)
-  video_url     String?           @db.VarChar(500)
-  ativo         Boolean           @default(true)
-  criado_em     DateTime?         @default(now()) @db.Timestamp(0)
-  atualizado_em DateTime?         @default(now()) @db.Timestamp(0)
-
-  @@index([ativo, musculo, equipamento, nivel, categoria], map: "idx_exercicios_filtros")
-}
 
 enum exercicios_nivel {
   Iniciante
   Intermediario @map("Intermediário")
   Avancado      @map("Avançado")
+}
+
+enum usuarios_especialidade {
+  educacao_fisica
+  nutricao
+  fisioterapia
+}
+
+enum fichas_status {
+  rascunho
+  publicada
 }
