@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { useAuth } from '@/contexts/AuthContext'
+import { rotaInicial } from '@/routes/rotaInicial'
 
 export default function Login() {
   const { login } = useAuth()
@@ -31,10 +32,7 @@ export default function Login() {
       setEnviando(true)
       const usuarioLogado = await login(dados.login.trim(), dados.senha)
 
-      navigate(
-        usuarioLogado.papel === 'admin' ? '/inicio-admin' : '/inicio',
-        { replace: true }
-      )
+      navigate(rotaInicial(usuarioLogado.papel), { replace: true })
     } catch (err) {
       setErroGeral(err.message)
     } finally {

@@ -1,14 +1,24 @@
 import jwt from 'jsonwebtoken'
+import { pool } from '../config/db.js'
 
-export function autenticar(req, res, next) {
+export async function autenticar(req, res, next) {
   const token = req.cookies?.token
   if (!token) return res.status(401).json({ erro: 'Não autenticado' })
+
+  let dados
   try {
-    req.usuario = jwt.verify(token, process.env.JWT_SECRET)
-    next()
+    dados = jwt.verify(token, process.env.JWT_SECRET)
   } catch {
-    res.status(401).json({ erro: 'Sessão inválida ou expirada' })
+    return res.status(401).json({ erro: 'Sessão inválida ou expirada' })
   }
+
+  // Confere no banco: bloqueia desativados e usa o papel atual (não o do token).
+  const [rows] = await pool.query(
+    'SELECT papel FROM usuarios WHERE id = ? AND ativo = TRUE', [dados.id])
+  if (!rows[0]) return res.status(401).json({ erro: 'Sessão inválida ou expirada' })
+
+  req.usuario = { id: dados.id, papel: rows[0].papel }
+  next()
 }
 
 export const autorizar = (...papeis) => (req, res, next) => {

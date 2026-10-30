@@ -3,7 +3,8 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import {
   Activity, Bell, CalendarCheck, CalendarDays, ChevronDown, CreditCard,
   Dumbbell, HeartPulse, Home, LogOut, Menu, Settings, Stethoscope,
-  TrendingUp, User, Users, X,
+  TrendingUp, User, Users, X, Library, Wrench, UserRound, ClipboardList,
+  FileSpreadsheet
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -12,13 +13,27 @@ const MENU = [
   { nome: 'Página inicial', icone: Home, rota: '/inicio' },
   { nome: 'Meus treinos', icone: Dumbbell, rota: null },
   { nome: 'Exercícios', icone: Activity, rota: '/biblioteca' },
-  { nome: 'Progresso', icone: TrendingUp, rota: null },
-  { nome: 'Aulas', icone: Users, rota: null },
+  { nome: 'Progresso', icone: TrendingUp, rota: '/progresso' },
+  { nome: 'Aulas', icone: Users, rota: '/aulas' },
   { nome: 'Agendamentos', icone: CalendarCheck, rota: '/agendamentos' },
   { nome: 'Consulta', icone: Stethoscope, rota: null },
   { nome: 'Acompanhamentos', icone: HeartPulse, rota: null },
-  { nome: 'Agenda', icone: CalendarDays, rota: null },
+  { nome: 'Agenda', icone: CalendarDays, rota: '/agenda' },
   { nome: 'Financeiro', icone: CreditCard, rota: '/financeiro' },
+]
+
+const MENU_ADMIN = [
+  { nome: 'Página inicial', icone: Home, rota: '/inicio-admin' },
+  { nome: 'Alunos', icone: Users, rota: '/admin/alunos' },
+  { nome: 'Monitores', icone: UserRound, rota: null },
+  { nome: 'Gerenciar Treinos', icone: Dumbbell, rota: null },
+  { nome: 'Gerenciar Exercícios', icone: Activity, rota: '/admin/exercicios' },
+  { nome: 'Gerenciar Equipamentos', icone: Wrench, rota: '/admin/equipamentos' },
+  { nome: 'Gerenciar Aulas', icone: Users, rota: null },
+  { nome: 'Gerenciar Atendimentos', icone: Stethoscope, rota: null },
+  { nome: 'Financeiro', icone: CreditCard, rota: null },
+  { nome: 'Relatórios', icone: FileSpreadsheet, rota: null },
+  
 ]
 
 const MENU_USUARIO = [
@@ -85,8 +100,9 @@ function ItemMenu({ item, recolhido, aoNavegar }) {
   )
 }
 
-export default function LayoutAutenticado({ titulo, children, menu = MENU  }) {
+export default function LayoutAutenticado({ titulo, children, menu}) {
   const { usuario, logout } = useAuth()
+  const menuAtual = menu ?? (usuario?.papel === 'admin' ? MENU_ADMIN : MENU)
   const navigate = useNavigate()
   const [menuAberto, setMenuAberto] = useState(false) // gaveta no celular
   const [recolhido, setRecolhido] = useState(lerPreferencia) // desktop: escondido até o mouse chegar perto
@@ -209,7 +225,7 @@ export default function LayoutAutenticado({ titulo, children, menu = MENU  }) {
 
         <nav aria-label="Menu principal" className={`flex-1 overflow-y-auto px-3 pb-6 ${recolhido ? 'lg:px-2' : ''}`}>
           <ul className="space-y-1">
-            {menu.map((item) => (
+            {menuAtual.map((item) => (
               <li key={item.nome}>
                 <ItemMenu item={item} recolhido={recolhido} aoNavegar={() => setMenuAberto(false)} />
               </li>

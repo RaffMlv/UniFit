@@ -9,7 +9,7 @@ export async function api(path, options = {}) {
     })
     const data = await res.json().catch(() => ({}))
     if (!res.ok) {
-        throw new Error(data.error || 'Erro desconhecido')
+        throw new Error(data.erro || data.error || 'Erro desconhecido')
     }
     return data 
 }

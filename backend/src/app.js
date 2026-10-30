@@ -6,6 +6,7 @@ import ratelimit from 'express-rate-limit'
 import authRoutes from './routes/auth.routes.js'
 import triagemRoutes from './routes/triagem.routes.js'
 import exerciciosRoutes from './routes/exercicios.rotes.js'
+import adminAlunosRoutes from './routes/admin.alunos.routes.js'
 
 const app = express()
 app.use(helmet())
@@ -17,10 +18,12 @@ app.get('/api/saude', (req, res) => res.json({ status: 'ok' }))
 app.use('/api/auth', ratelimit({ windowMs: 15 * 60 * 1000, max: 100 }), authRoutes)
 app.use('/api/triagem', triagemRoutes)
 app.use('/api/exercicios', exerciciosRoutes)
-//Erro genérico não exposto para o usuário, mas logado no console para depuração
+app.use('/api/admin/alunos', adminAlunosRoutes)
+
+// Deve ficar depois de todas as rotas.
 app.use((err, req, res, next) => {
-    console.error(err.stack)
-    res.status(500).json({ error: 'Erro interno do servidor.' })
+  console.error(err.stack)
+  res.status(500).json({ erro: 'Erro interno do servidor.' })
 })
 
 export default app

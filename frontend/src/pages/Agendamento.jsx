@@ -19,7 +19,7 @@ function diaBR(data) {
 }
 
 export default function Agendamento() {
-  const [categoria, setCategoria] = useState('Nutricionista')
+  const [categoria, setCategoria] = useState('Nutrição')
   const [data, setData] = useState('')
   const [horario, setHorario] = useState('')
   const [confirmando, setConfirmando] = useState(false)
