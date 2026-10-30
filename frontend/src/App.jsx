@@ -43,17 +43,11 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/esqueci-senha" element={<EsqueciSenha />} />
-      <Route path="/triagem" element={
-        <RotaProtegida roles={['aluno']} ignorarTriagem><TriagemRota /></RotaProtegida>
-      } />
-      <Route path="/inicio" element={
-        <RotaProtegida roles={['aluno', 'monitor']}><Inicio /></RotaProtegida>
-      } />
+      <Route path="/triagem" element={<RotaProtegida roles={['aluno']} ignorarTriagem><TriagemRota /></RotaProtegida>}/>
+      <Route path="/inicio" element={<RotaProtegida roles={['aluno', 'monitor']}><Inicio /></RotaProtegida>} />
       <Route path="/inicio-admin"element={<RotaProtegida roles={['admin']}> <InicioAdmin /></RotaProtegida>}/>
       <Route path="*" element={<RedirecionarInicio />} />
-      <Route path="/financeiro" element={
-        <RotaProtegida roles={['aluno']}><Financeiro /></RotaProtegida>
-      } />
+      <Route path="/financeiro" element={<RotaProtegida roles={['aluno']}><Financeiro /></RotaProtegida>} />
       <Route path="/agendamentos" element={<RotaProtegida><Agendamento /></RotaProtegida>} />
       <Route path="/biblioteca" element={<RotaProtegida><Biblioteca /></RotaProtegida>} />
       <Route path="/perfil" element={<RotaProtegida><Perfil /></RotaProtegida>} />
