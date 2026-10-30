@@ -29,8 +29,13 @@ export const autorizar = (...papeis) => (req, res, next) => {
 }
 
 export const autorizarEspecialidade = (...especialidades) => (req, res, next) => {
-  if(!especialidades.includes(req.usuario.especialidades)){
+  const { papel, especialidade } = req.usuario
+
+  // admin passa por cima da regra de especialidade
+  if (papel === 'admin') return next()
+
+  if (papel !== 'monitor' || !especialidades.includes(especialidade)) {
     return res.status(403).json({ erro: 'Sem permissão para esta ação' })
   }
-  next();
+  next()
 }
