@@ -131,7 +131,7 @@ router.get('/minhas', autorizar('aluno'), async (req, res) => {
 // altera a ficha de qualquer aluno. Fechar isso na Sprint 3 (RF23.7).
 
 // Dados do aluno e todas as fichas dele (rascunhos inclusos)
-router.get('/aluno/:alunoId', autorizar('monitor', 'admin'), autorizarEspecialidade('educacao-fisica'), async (req, res) => {
+router.get('/aluno/:alunoId', autorizar('monitor', 'admin'), autorizarEspecialidade('educacaofisica'), async (req, res) => {
   const alunoId = lerId(req, 'alunoId')
   if (!alunoId) return res.status(404).json({ erro: 'Aluno não encontrado' })
   const [alunos] = await pool.query(
@@ -141,7 +141,7 @@ router.get('/aluno/:alunoId', autorizar('monitor', 'admin'), autorizarEspecialid
   res.json({ aluno: alunos[0], fichas: agrupar(rows) })
 })
 
-router.get('/:id', autorizar('monitor', 'admin'), async (req, res) => {
+router.get('/:id', autorizar('monitor', 'admin'), autorizarEspecialidade('educacao_fisica'), async (req, res) => {
   const id = lerId(req)
   if (!id) return res.status(404).json({ erro: 'Ficha não encontrada' })
   const [rows] = await pool.query(`${SELECT_FICHA} WHERE f.id = ? ${ORDEM}`, [id])
@@ -151,7 +151,7 @@ router.get('/:id', autorizar('monitor', 'admin'), async (req, res) => {
   res.json({ aluno, ficha })
 })
 
-router.post('/', autorizar('monitor', 'admin'), async (req, res) => {
+router.post('/', autorizar('monitor', 'admin'), autorizarEspecialidade('educacao_fisica'), async (req, res) => {
   const p = fichaBase.extend({ alunoId: z.coerce.number().int().positive() }).safeParse(req.body)
   if (!p.success) return res.status(400).json({ erro: 'Resposta inválida' })
   const erro = erroDaFicha(p.data)
@@ -176,7 +176,7 @@ router.post('/', autorizar('monitor', 'admin'), async (req, res) => {
 })
 
 // Substitui a estrutura inteira da ficha
-router.put('/:id', autorizar('monitor', 'admin'), async (req, res) => {
+router.put('/:id', autorizar('monitor', 'admin'), autorizarEspecialidade('educacao_fisica'), async (req, res) => {
   const id = lerId(req)
   if (!id) return res.status(404).json({ erro: 'Ficha não encontrada' })
   const p = fichaBase.safeParse(req.body)
@@ -201,7 +201,7 @@ router.put('/:id', autorizar('monitor', 'admin'), async (req, res) => {
   }
 })
 
-router.delete('/:id', autorizar('monitor', 'admin'), async (req, res) => {
+router.delete('/:id', autorizar('monitor', 'admin'), autorizarEspecialidade('educacao_fisica'), async (req, res) => {
   const id = lerId(req)
   if (!id) return res.status(404).json({ erro: 'Ficha não encontrada' })
   const [r] = await pool.query('DELETE FROM fichas WHERE id = ?', [id])
