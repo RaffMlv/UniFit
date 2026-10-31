@@ -46,6 +46,9 @@ model usuarios {
   triagens                                                             triagens?
   vinculos_acompanhamento_vinculos_acompanhamento_aluno_idTousuarios   vinculos_acompanhamento[] @relation("vinculos_acompanhamento_aluno_idTousuarios")
   vinculos_acompanhamento_vinculos_acompanhamento_monitor_idTousuarios vinculos_acompanhamento[] @relation("vinculos_acompanhamento_monitor_idTousuarios")
+  disponibilidades_semanais disponibilidades_semanais[]
+  agendamentos_aluno       agendamentos[] @relation("AgendamentoAluno")
+  agendamentos_monitor    agendamentos[] @relation("AgendamentoMonitor")
 }
 
 model exercicios {
@@ -147,4 +150,43 @@ enum usuarios_especialidade {
 enum fichas_status {
   rascunho
   publicada
+}
+
+model disponibilidades_semanais {
+  id                 Int      @id @default(autoincrement())
+  monitor_id         Int
+  dia_semana         Int      @db.UnsignedTinyInt
+  hora_inicio        DateTime @db.Time(0)
+  hora_fim           DateTime @db.Time(0)
+  duracao_minutos    Int
+  intervalo_minutos  Int      @default(0)
+  ativo              Boolean  @default(true)
+
+  monitor usuarios @relation(fields: [monitor_id], references: [id])
+
+  @@index([monitor_id, dia_semana], map: "idx_disponibilidade_monitor")
+}
+
+model agendamentos {
+  id            Int      @id @default(autoincrement())
+  aluno_id      Int
+  monitor_id    Int
+  especialidade usuarios_especialidade
+  data          DateTime @db.Date
+  hora_inicio   DateTime @db.Time(0)
+  hora_fim      DateTime @db.Time(0)
+  status agendamentos_status @default(agendado)
+  criado_em     DateTime @default(now()) @db.Timestamp(0)
+
+  aluno   usuarios @relation("AgendamentoAluno", fields: [aluno_id], references: [id])
+  monitor usuarios @relation("AgendamentoMonitor", fields: [monitor_id], references: [id])
+
+  @@index([aluno_id, data], map: "idx_agendamento_aluno")
+  @@index([monitor_id, data], map: "idx_agendamento_monitor")
+}
+
+enum agendamentos_status {
+  agendado
+  cancelado
+  concluido
 }
