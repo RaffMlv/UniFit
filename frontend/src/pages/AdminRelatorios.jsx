@@ -19,12 +19,6 @@ const tiposRelatorio = [
   { id: 'financeiro', nome: 'Financeiro', descricao: 'Relatório financeiro, quando o módulo estiver habilitado.' },
 ]
 
-/**
- * Relatórios administrativos (RF47).
- * Recebe `relatorios` no formato { [tipo]: { colunas: [{ chave, titulo }],
- * linhas: [{ ... }], resumo: [{ titulo, valor }] } e `onGerar(filtros)`.
- * Nenhum dado de demonstração é incluído nesta tela.
- */
 export default function AdminRelatorios({ relatorios = {}, onGerar, financeiroHabilitado = false }) {
   const [tipo, setTipo] = useState('frequencia')
   const [dataInicial, setDataInicial] = useState('')

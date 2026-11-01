@@ -33,13 +33,6 @@ const coresSituacao = {
   devolvido: 'bg-rose-50 text-rose-700',
 }
 
-/**
- * Gestão administrativa das fichas de treino.
- * Recebe `fichas` da API quando a integração estiver disponível.
- * Cada ficha esperada: { id, nome, objetivo, aluno: { nome, matricula },
- * monitor: { nome }, divisoes: [{ nome, exercicios: [{ nome, series,
- * repeticoes, carga, descanso }] }], situacao, atualizadoEm }.
- */
 export default function AdminTreinos({ fichas = [] }) {
   const [busca, setBusca] = useState('')
   const [situacao, setSituacao] = useState('todos')

@@ -27,12 +27,6 @@ const permissoesDisponiveis = [
   { id: 'acompanhamento', nome: 'Registrar acompanhamento' },
 ]
 
-/**
- * Tela administrativa de monitores (RF38).
- * Recebe `monitores` da API quando a integração estiver disponível.
- * Cada registro esperado: { id, nome, matricula, curso, periodo, supervisor,
- * ativo, disponibilidade, permissoes, alunos, historico }.
- */
 export default function AdminMonitores({ monitores = [] }) {
   const [areaAtiva, setAreaAtiva] = useState('educacao_fisica')
   const [busca, setBusca] = useState('')

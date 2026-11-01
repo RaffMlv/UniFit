@@ -50,14 +50,6 @@ function formatarData(valor) {
 const idDaOpcao = (item) => typeof item === 'string' ? item : item.id
 const nomeDaOpcao = (item) => typeof item === 'string' ? item : item.nome
 
-/**
- * Área financeira administrativa (RF45 e RF46).
- * Recebe `cobrancas`, `planos`, `unidades` e `resumo` da API.
- * Cobrança esperada: { id, aluno: { id, nome }, valor, vencimento,
- * pagamentoEm, formaPagamento, situacao, plano, unidade }.
- * Resumo esperado: { recebido, pendente, vencido, pagamentosFiltrados,
- * inadimplenciaFiltrada }.
- */
 export default function AdminFinanceiro({ cobrancas = [], planos = [], unidades = [], resumo = null }) {
   const [aba, setAba] = useState('cobrancas')
   const [busca, setBusca] = useState('')

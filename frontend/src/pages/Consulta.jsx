@@ -9,17 +9,6 @@ const campo =
 const botao =
   'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#004AF7] px-5 py-3 text-sm font-semibold text-white hover:bg-[#142191]'
 
-/*
-Formato esperado da API:
-{
-  id,
-  nome,
-  endereco,
-  servicos: ['Nutrição', 'Fisioterapia'],
-  responsaveis: ['Nome do profissional'],
-  descricao
-}
-*/
 export default function Consulta({ unidades = [] }) {
   const [busca, setBusca] = useState('')
   const [buscaAplicada, setBuscaAplicada] = useState('')
