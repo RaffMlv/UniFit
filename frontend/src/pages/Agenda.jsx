@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { api } from '@/services/api'
 import { Link } from 'react-router-dom'
 import {
   CalendarDays,
@@ -66,7 +67,9 @@ export default function Agenda() {
 
 
   
-  const [eventos] = useState([])
+  const [eventos, setEventos] = useState([])
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState('')
 
   const hoje = chaveData(new Date())
   const primeiroDia = inicioSemana(referencia)
@@ -85,6 +88,49 @@ export default function Agenda() {
     { length: 42 },
     (_, indice) => adicionarDias(inicioGrade, indice)
   )
+
+  const inicioConsulta = visao === 'semanal'
+  ? chaveData(diasDaSemana[0])
+  : chaveData(diasDoMes[0])
+
+  const fimConsulta = visao === 'semanal'
+    ? chaveData(diasDaSemana[6])
+    : chaveData(diasDoMes[41])
+
+    useEffect(() => {
+    let ativo = true
+
+    async function carregarEventos() {
+      try {
+        setCarregando(true)
+        setErro('')
+
+        const resposta = await api(
+          `/agenda?inicio=${inicioConsulta}&fim=${fimConsulta}`
+        )
+
+        if (ativo) {
+          setEventos(resposta.eventos)
+        }
+
+      } catch (error) {
+        if (ativo) {
+          setErro(error.message)
+        }
+
+      } finally {
+        if (ativo) {
+          setCarregando(false)
+        }
+      }
+    }
+
+    carregarEventos()
+
+    return () => {
+      ativo = false
+    }
+  }, [inicioConsulta, fimConsulta])
 
   const selecionado = eventos.find(evento => evento.id === selecionadoId)
 
@@ -256,6 +302,18 @@ export default function Agenda() {
           </ul>
         </section>
 
+        {carregando && (
+          <p role="status" className="text-sm text-slate-500">
+            Carregando compromissos...
+          </p>
+        )}
+
+        {erro && (
+          <p role="alert" className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+            Não foi possível carregar a agenda: {erro}
+          </p>
+        )}
+
         <section
           aria-label={`Calendário ${visao}`}
           className="overflow-hidden rounded-2xl bg-white shadow-sm"
@@ -374,12 +432,14 @@ export default function Agenda() {
             )}
           </div>
 
-          {eventosNoPeriodo.length === 0 && (
+          {eventosNoPeriodo.length === 0 && !carregando && !erro && (
             <p className="border-t border-slate-100 p-5 text-center text-sm text-slate-500">
               Nenhum compromisso para exibir neste período.
             </p>
           )}
         </section>
+
+
 
         <section
           id="detalhes-agenda"

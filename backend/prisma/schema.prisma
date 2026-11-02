@@ -49,6 +49,8 @@ model usuarios {
   disponibilidades_semanais disponibilidades_semanais[]
   agendamentos_aluno       agendamentos[] @relation("AgendamentoAluno")
   agendamentos_monitor    agendamentos[] @relation("AgendamentoMonitor")
+  agenda_eventos_aluno agenda_eventos[] @relation("AgendaEventoAluno")
+  agenda_eventos_responsavel agenda_eventos[] @relation("AgendaEventoResponsavel")
 }
 
 model exercicios {
@@ -189,4 +191,36 @@ enum agendamentos_status {
   agendado
   cancelado
   concluido
+}
+
+enum agenda_eventos_categoria {
+  treino
+  aula
+  avaliacao
+}
+
+enum agenda_eventos_status {
+  agendado
+  cancelado
+  concluido
+}
+
+model agenda_eventos {
+  id             Int                    @id @default(autoincrement())
+  aluno_id       Int
+  categoria      agenda_eventos_categoria
+  titulo         String                 @db.VarChar(150)
+  descricao      String?                @db.Text
+  data           DateTime               @db.Date
+  hora_inicio    DateTime               @db.Time(0)
+  hora_fim       DateTime               @db.Time(0)
+  responsavel_id Int?
+  local          String?                @db.VarChar(180)
+  status         agenda_eventos_status @default(agendado)
+  criado_em      DateTime               @default(now()) @db.Timestamp(0)
+
+  aluno       usuarios  @relation("AgendaEventoAluno", fields: [aluno_id], references: [id], onDelete: Cascade)
+  responsavel usuarios? @relation("AgendaEventoResponsavel", fields: [responsavel_id], references: [id], onDelete: SetNull)
+
+  @@index([aluno_id, data])
 }

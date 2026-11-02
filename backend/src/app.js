@@ -11,6 +11,7 @@ import fichasRoutes from './routes/fichas.routes.js'
 import adminProfissionaisRoutes from './routes/admin.profissionais.routes.js';
 import vinculosRoutes from './routes/vinculos.routes.js';
 import agendamentosRoutes from './routes/agendamentos.routes.js';
+import agendaRoutes from "./routes/agenda.routes.js";
 
 const app = express()
 app.use(helmet())
@@ -27,6 +28,7 @@ app.use('/api/fichas', fichasRoutes)
 app.use('/api/admin/profissionais', adminProfissionaisRoutes)
 app.use('/api/vinculos', vinculosRoutes)
 app.use('/api/agendamentos', agendamentosRoutes)
+app.use('/api/agenda', agendaRoutes)
 
 // Deve ficar depois de todas as rotas.
 app.use((err, req, res, next) => {
