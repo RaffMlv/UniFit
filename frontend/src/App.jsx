@@ -76,7 +76,17 @@ export default function App() {
       <Route path="/aulas" element={<RotaProtegida roles={['aluno']}><Aulas /></RotaProtegida>} />
       <Route path="/consulta" element={<RotaProtegida roles={['aluno']}><Consulta /></RotaProtegida>}/>      
       <Route path="/acompanhamento"element={<RotaProtegida roles={['aluno']}><Acompanhamento /></RotaProtegida>}/>
-      <Route path="/admin/monitores" element={<RotaProtegida roles={['admin']}><AdminMonitores /></RotaProtegida>}/>
+      <Route
+            path="/admin/monitores"
+            element={
+              <RotaProtegida
+                roles={['admin', 'monitor']}
+                monitorCompleto
+              >
+                <AdminMonitores />
+              </RotaProtegida>
+            }
+          />
       <Route path="/admin/treinos" element={<RotaProtegida roles={['admin']}><AdminTreinos /></RotaProtegida>} />
       <Route path="/admin/aulas" element={<RotaProtegida roles={['admin']}><AdminAulas /></RotaProtegida>} />
       <Route path="/admin/atendimentos" element={<RotaProtegida roles={['admin']}><AdminAtendimentos /></RotaProtegida>} />

@@ -91,9 +91,17 @@ router.post('/logout', (req, res) => {
 
 router.get('/perfil', autenticar, async (req, res) => {
   const [rows] = await pool.query(
-    `SELECT u.id, u.nome, u.cpf, u.email, u.papel, u.especialidade,
-            t.objetivo AS objetivo,
-            t.usuario_id IS NOT NULL AS triagemConcluida
+    `SELECT
+    u.id,
+    u.nome,
+    u.cpf,
+    u.email,
+    u.papel,
+    u.especialidade,
+    u.tipo_autorizacao,
+    u.supervisor_id,
+    t.objetivo AS objetivo,
+    t.usuario_id IS NOT NULL AS triagemConcluida
      FROM usuarios u
      LEFT JOIN triagens t ON t.usuario_id = u.id
      WHERE u.id = ?`, [req.usuario.id])

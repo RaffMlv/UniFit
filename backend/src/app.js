@@ -8,7 +8,7 @@ import triagemRoutes from './routes/triagem.routes.js'
 import exerciciosRoutes from './routes/exercicios.rotes.js'
 import adminAlunosRoutes from './routes/admin.alunos.routes.js'
 import fichasRoutes from './routes/fichas.routes.js'
-import adminProfissionaisRoutes from './routes/admin.profissionais.routes.js';
+import adminMonitoresRoutes from './routes/admin.monitores.routes.js';
 import vinculosRoutes from './routes/vinculos.routes.js';
 import agendamentosRoutes from './routes/agendamentos.routes.js';
 import agendaRoutes from "./routes/agenda.routes.js";
@@ -25,7 +25,7 @@ app.use('/api/triagem', triagemRoutes)
 app.use('/api/exercicios', exerciciosRoutes)
 app.use('/api/admin/alunos', adminAlunosRoutes)
 app.use('/api/fichas', fichasRoutes)
-app.use('/api/admin/profissionais', adminProfissionaisRoutes)
+app.use('/api/admin/monitores', adminMonitoresRoutes)
 app.use('/api/vinculos', vinculosRoutes)
 app.use('/api/agendamentos', agendamentosRoutes)
 app.use('/api/agenda', agendaRoutes)

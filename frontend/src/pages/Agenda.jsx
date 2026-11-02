@@ -271,16 +271,7 @@ export default function Agenda() {
               {tituloPeriodo}
             </h3>
 
-            <button
-              type="button"
-              onClick={() => {
-                setReferencia(new Date())
-                setSelecionadoId(null)
-              }}
-              className={botao}
-            >
-              Hoje
-            </button>
+            
           </div>
 
           <ul
