@@ -8,6 +8,10 @@ import triagemRoutes from './routes/triagem.routes.js'
 import exerciciosRoutes from './routes/exercicios.rotes.js'
 import adminAlunosRoutes from './routes/admin.alunos.routes.js'
 import fichasRoutes from './routes/fichas.routes.js'
+import adminMonitoresRoutes from './routes/admin.monitores.routes.js';
+import vinculosRoutes from './routes/vinculos.routes.js';
+import agendamentosRoutes from './routes/agendamentos.routes.js';
+import agendaRoutes from "./routes/agenda.routes.js";
 
 const app = express()
 app.use(helmet())
@@ -21,11 +25,19 @@ app.use('/api/triagem', triagemRoutes)
 app.use('/api/exercicios', exerciciosRoutes)
 app.use('/api/admin/alunos', adminAlunosRoutes)
 app.use('/api/fichas', fichasRoutes)
+app.use('/api/admin/monitores', adminMonitoresRoutes)
+app.use('/api/vinculos', vinculosRoutes)
+app.use('/api/agendamentos', agendamentosRoutes)
+app.use('/api/agenda', agendaRoutes)
 
 // Deve ficar depois de todas as rotas.
 app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(500).json({ erro: 'Erro interno do servidor.' })
-})
+    console.error("ERRO:", err);
+
+    res.status(500).json({
+        erro: "Erro interno do servidor.",
+        detalhe: err.message
+    });
+});
 
 export default app

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ImageOff, PlayCircle } from 'lucide-react'
+import { ImageOff, CheckCircle } from 'lucide-react'
 import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
 import { api } from '@/services/api'
 
-function FichaCard({ ficha }) {
+function FichaCard({ ficha, onSelecionarAtual }) {
   const [letra, setLetra] = useState(ficha.divisoes[0]?.letra)
   const divisao = ficha.divisoes.find((d) => d.letra === letra)
   const total = ficha.divisoes.reduce((soma, d) => soma + d.exercicios.length, 0)
@@ -19,11 +19,21 @@ function FichaCard({ ficha }) {
             {ficha.divisoes.length} {ficha.divisoes.length === 1 ? 'divisão' : 'divisões'} · {total} exercícios
           </p>
         </div>
-        <button type="button" disabled
-          title="Disponível quando a execução do treino for implementada"
-          className="inline-flex items-center gap-2 rounded-lg bg-[#004AF7] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
-          <PlayCircle size={17} aria-hidden="true" /> Iniciar treino
-        </button>
+        {ficha.atual ? (
+          <span className="inline-flex items-center gap-2 rounded-lg bg-green-100 px-4 py-2.5 text-sm font-semibold text-green-700">
+            <CheckCircle size={17} aria-hidden="true" />
+            Treino atual
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={() => onSelecionarAtual(ficha.id)}
+            className="inline-flex items-center gap-2 rounded-lg bg-[#004AF7] px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+          >
+            <CheckCircle size={17} aria-hidden="true" />
+            Definir como atual
+          </button>
+        )}
       </div>
 
       <div role="tablist" aria-label={`Divisões de ${ficha.nome}`} className="mt-4 flex flex-wrap gap-2">
@@ -89,6 +99,25 @@ export default function MeusTreinos() {
       .finally(() => setCarregando(false))
   }, [])
 
+  const selecionarFichaAtual = async (fichaId) => {
+    try {
+      setErro('')
+
+      await api(`/fichas/${fichaId}/definir-atual`, {
+        method: 'PATCH'
+      })
+
+      setFichas(fichasAtuais =>
+        fichasAtuais.map(ficha => ({
+          ...ficha,
+          atual: ficha.id === fichaId
+        }))
+      )
+    } catch (error) {
+      setErro(error.message || 'Não foi possível selecionar a ficha.')
+    }
+  }
+
   return (
     <LayoutAutenticado titulo="Meus treinos">
       <div className="space-y-6 text-[#142191]">
@@ -110,7 +139,13 @@ export default function MeusTreinos() {
           </div>
         )}
 
-        {fichas.map((f) => <FichaCard key={f.id} ficha={f} />)}
+        {fichas.map(f => (
+          <FichaCard
+            key={f.id}
+            ficha={f}
+            onSelecionarAtual={selecionarFichaAtual}
+          />
+        ))}
 
         <p className="text-xs text-slate-500">
           A carga usada na última sessão aparece aqui depois que a execução do treino for implementada.

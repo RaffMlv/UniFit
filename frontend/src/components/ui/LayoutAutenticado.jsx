@@ -16,8 +16,8 @@ const MENU = [
   { nome: 'Progresso', icone: TrendingUp, rota: '/progresso' },
   { nome: 'Aulas', icone: Users, rota: '/aulas' },
   { nome: 'Agendamentos', icone: CalendarCheck, rota: '/agendamentos' },
-  { nome: 'Consulta', icone: Stethoscope, rota: null },
-  { nome: 'Acompanhamentos', icone: HeartPulse, rota: null },
+  { nome: 'Consulta', icone: Stethoscope, rota: '/consulta' },
+  { nome: 'Acompanhamentos', icone: HeartPulse, rota: '/acompanhamento' },
   { nome: 'Agenda', icone: CalendarDays, rota: '/agenda' },
   { nome: 'Financeiro', icone: CreditCard, rota: '/financeiro' },
 ]
@@ -25,14 +25,14 @@ const MENU = [
 const MENU_ADMIN = [
   { nome: 'Página inicial', icone: Home, rota: '/inicio-admin' },
   { nome: 'Alunos', icone: Users, rota: '/admin/alunos' },
-  { nome: 'Monitores', icone: UserRound, rota: null },
-  { nome: 'Gerenciar Treinos', icone: Dumbbell, rota: null },
+  { nome: 'Monitores', icone: UserRound, rota: '/admin/monitores'},
+  { nome: 'Gerenciar Treinos', icone: Dumbbell, rota: '/admin/treinos' },
   { nome: 'Gerenciar Exercícios', icone: Activity, rota: '/admin/exercicios' },
   { nome: 'Gerenciar Equipamentos', icone: Wrench, rota: '/admin/equipamentos' },
-  { nome: 'Gerenciar Aulas', icone: Users, rota: null },
-  { nome: 'Gerenciar Atendimentos', icone: Stethoscope, rota: null },
-  { nome: 'Financeiro', icone: CreditCard, rota: null },
-  { nome: 'Relatórios', icone: FileSpreadsheet, rota: null },
+  { nome: 'Gerenciar Aulas', icone: Users, rota: '/admin/aulas' },
+  { nome: 'Gerenciar Atendimentos', icone: Stethoscope, rota: '/admin/atendimentos' },
+  { nome: 'Financeiro', icone: CreditCard, rota: '/admin/financeiro' },
+  { nome: 'Relatórios', icone: FileSpreadsheet, rota: '/admin/relatorios' },
   
 ]
 

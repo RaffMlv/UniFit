@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { api } from '@/services/api'
 import { Link } from 'react-router-dom'
 import {
   CalendarDays,
@@ -66,7 +67,9 @@ export default function Agenda() {
 
 
   
-  const [eventos] = useState([])
+  const [eventos, setEventos] = useState([])
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState('')
 
   const hoje = chaveData(new Date())
   const primeiroDia = inicioSemana(referencia)
@@ -85,6 +88,49 @@ export default function Agenda() {
     { length: 42 },
     (_, indice) => adicionarDias(inicioGrade, indice)
   )
+
+  const inicioConsulta = visao === 'semanal'
+  ? chaveData(diasDaSemana[0])
+  : chaveData(diasDoMes[0])
+
+  const fimConsulta = visao === 'semanal'
+    ? chaveData(diasDaSemana[6])
+    : chaveData(diasDoMes[41])
+
+    useEffect(() => {
+    let ativo = true
+
+    async function carregarEventos() {
+      try {
+        setCarregando(true)
+        setErro('')
+
+        const resposta = await api(
+          `/agenda?inicio=${inicioConsulta}&fim=${fimConsulta}`
+        )
+
+        if (ativo) {
+          setEventos(resposta.eventos)
+        }
+
+      } catch (error) {
+        if (ativo) {
+          setErro(error.message)
+        }
+
+      } finally {
+        if (ativo) {
+          setCarregando(false)
+        }
+      }
+    }
+
+    carregarEventos()
+
+    return () => {
+      ativo = false
+    }
+  }, [inicioConsulta, fimConsulta])
 
   const selecionado = eventos.find(evento => evento.id === selecionadoId)
 
@@ -121,7 +167,12 @@ export default function Agenda() {
   function eventosDoDia(dia) {
     return eventos
       .filter(evento => evento.data === chaveData(dia))
-      .sort((a, b) => a.inicio.localeCompare(b.inicio))
+      .sort((a, b) => {
+        if (!a.inicio) return -1
+        if (!b.inicio) return 1
+
+        return a.inicio.localeCompare(b.inicio)
+      })
   }
 
   function renderizarEvento(evento) {
@@ -139,7 +190,11 @@ export default function Agenda() {
         } ${selecionadoId === evento.id ? 'ring-2 ring-[#004AF7]' : ''}`}
       >
         <span className="block font-bold">{evento.titulo}</span>
-        <span>{evento.inicio}–{evento.fim}</span>
+        {evento.inicio && evento.fim && (
+            <span>
+              {evento.inicio}–{evento.fim}
+            </span>
+        )}
         {evento.status === 'cancelado' && (
           <span className="block font-semibold">Cancelado</span>
         )}
@@ -225,16 +280,7 @@ export default function Agenda() {
               {tituloPeriodo}
             </h3>
 
-            <button
-              type="button"
-              onClick={() => {
-                setReferencia(new Date())
-                setSelecionadoId(null)
-              }}
-              className={botao}
-            >
-              Hoje
-            </button>
+            
           </div>
 
           <ul
@@ -255,6 +301,18 @@ export default function Agenda() {
             ))}
           </ul>
         </section>
+
+        {carregando && (
+          <p role="status" className="text-sm text-slate-500">
+            Carregando compromissos...
+          </p>
+        )}
+
+        {erro && (
+          <p role="alert" className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+            Não foi possível carregar a agenda: {erro}
+          </p>
+        )}
 
         <section
           aria-label={`Calendário ${visao}`}
@@ -301,6 +359,28 @@ export default function Agenda() {
                     ))}
                   </tr>
                 </thead>
+
+                <tbody>
+                  <tr>
+                    <th className="border-t border-slate-100 p-3 text-xs font-medium text-slate-500">
+                      Sem horário
+                    </th>
+
+                    {diasDaSemana.map(dia => (
+                      <td
+                        key={chaveData(dia)}
+                        className="border-l border-t border-slate-100 p-1.5 align-top"
+                      >
+                        <div className="space-y-1">
+                          {eventosDoDia(dia)
+                            .filter(evento => !evento.inicio)
+                            .map(renderizarEvento)}
+                        </div>
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+
                 <tbody>
                   {horas.map(hora => (
                     <tr key={hora}>
@@ -320,6 +400,7 @@ export default function Agenda() {
                           <div className="space-y-1">
                             {eventosDoDia(dia)
                               .filter(evento =>
+                                evento.inicio &&
                                 Number(evento.inicio.split(':')[0]) === hora
                               )
                               .map(renderizarEvento)}
@@ -374,12 +455,14 @@ export default function Agenda() {
             )}
           </div>
 
-          {eventosNoPeriodo.length === 0 && (
+          {eventosNoPeriodo.length === 0 && !carregando && !erro && (
             <p className="border-t border-slate-100 p-5 text-center text-sm text-slate-500">
               Nenhum compromisso para exibir neste período.
             </p>
           )}
         </section>
+
+
 
         <section
           id="detalhes-agenda"
@@ -424,24 +507,6 @@ export default function Agenda() {
                   {selecionado.descricao}
                 </p>
               )}
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                {  }
-                <button
-                  type="button"
-                  disabled
-                  className="rounded-lg border border-red-200 px-4 py-3 text-sm font-semibold text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Cancelar agendamento
-                </button>
-                <button
-                  type="button"
-                  disabled
-                  className={`${botao} disabled:cursor-not-allowed disabled:opacity-50`}
-                >
-                  Ver detalhes do agendamento
-                </button>
-              </div>
             </div>
           )}
         </section>

@@ -31,21 +31,40 @@ model triagens {
 }
 
 model usuarios {
-  id                                                                   Int                       @id @default(autoincrement())
-  nome                                                                 String                    @db.VarChar(150)
-  cpf                                                                  String                    @unique(map: "matricula") @db.Char(11)
-  email                                                                String                    @unique(map: "email") @db.VarChar(150)
-  senha_hash                                                           String                    @db.VarChar(255)
-  papel                                                                usuarios_papel            @default(aluno)
-  ativo                                                                Boolean                   @default(true)
-  criado_em                                                            DateTime?                 @default(now()) @db.Timestamp(0)
+  id                                                                   Int                         @id @default(autoincrement())
+  nome                                                                 String                      @db.VarChar(150)
+  cpf                                                                  String                      @unique(map: "matricula") @db.Char(11)
+  email                                                                String                      @unique(map: "email") @db.VarChar(150)
+  senha_hash                                                           String                      @db.VarChar(255)
+  papel                                                                usuarios_papel              @default(aluno)
+  ativo                                                                Boolean                     @default(true)
+  criado_em                                                            DateTime?                   @default(now()) @db.Timestamp(0)
   especialidade                                                        usuarios_especialidade?
-  registro_profissional                                                String?                   @db.VarChar(30)
-  fichas_fichas_aluno_idTousuarios                                     fichas[]                  @relation("fichas_aluno_idTousuarios")
-  fichas_fichas_criada_porTousuarios                                   fichas[]                  @relation("fichas_criada_porTousuarios")
+  registro_profissional                                                String?                     @db.VarChar(30)
+  fichas_fichas_aluno_idTousuarios                                     fichas[]                    @relation("fichas_aluno_idTousuarios")
+  fichas_fichas_criada_porTousuarios                                   fichas[]                    @relation("fichas_criada_porTousuarios")
   triagens                                                             triagens?
-  vinculos_acompanhamento_vinculos_acompanhamento_aluno_idTousuarios   vinculos_acompanhamento[] @relation("vinculos_acompanhamento_aluno_idTousuarios")
-  vinculos_acompanhamento_vinculos_acompanhamento_monitor_idTousuarios vinculos_acompanhamento[] @relation("vinculos_acompanhamento_monitor_idTousuarios")
+  vinculos_acompanhamento_vinculos_acompanhamento_aluno_idTousuarios   vinculos_acompanhamento[]   @relation("vinculos_acompanhamento_aluno_idTousuarios")
+  vinculos_acompanhamento_vinculos_acompanhamento_monitor_idTousuarios vinculos_acompanhamento[]   @relation("vinculos_acompanhamento_monitor_idTousuarios")
+  disponibilidades_semanais                                            disponibilidades_semanais[]
+  agendamentos_aluno                                                   agendamentos[]              @relation("AgendamentoAluno")
+  agendamentos_monitor                                                 agendamentos[]              @relation("AgendamentoMonitor")
+  agenda_eventos_aluno                                                 agenda_eventos[]            @relation("AgendaEventoAluno")
+  agenda_eventos_responsavel                                           agenda_eventos[]            @relation("AgendaEventoResponsavel")
+
+  tipo_autorizacao usuarios_tipo_autorizacao?
+  supervisor_id    Int?
+
+  supervisor                usuarios?  @relation("SupervisaoMonitores", fields: [supervisor_id], references: [id], onDelete: SetNull)
+  monitores_supervisionados usuarios[] @relation("SupervisaoMonitores")
+
+  permissoes_recebidas  permissoes_monitores[] @relation("PermissoesRecebidas")
+  permissoes_concedidas permissoes_monitores[] @relation("PermissoesConcedidas")
+
+  historico_como_alvo  historico_monitores[] @relation("HistoricoMonitor")
+  historico_como_autor historico_monitores[] @relation("HistoricoAutor")
+
+  fichas_atuais fichas_atuais[]
 }
 
 model exercicios {
@@ -69,23 +88,26 @@ model exercicios {
 }
 
 model vinculos_acompanhamento {
-  id                                                    Int       @id @default(autoincrement())
-  aluno_id                                              Int
-  monitor_id                                            Int
-  criado_em                                             DateTime? @default(now()) @db.Timestamp(0)
-  usuarios_vinculos_acompanhamento_aluno_idTousuarios   usuarios  @relation("vinculos_acompanhamento_aluno_idTousuarios", fields: [aluno_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_vinculo_aluno")
-  usuarios_vinculos_acompanhamento_monitor_idTousuarios usuarios  @relation("vinculos_acompanhamento_monitor_idTousuarios", fields: [monitor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_vinculo_monitor")
+  id            Int                    @id @default(autoincrement())
+  aluno_id      Int
+  monitor_id    Int
+  especialidade usuarios_especialidade
+  criado_em     DateTime?              @default(now()) @db.Timestamp(0)
 
-  @@unique([aluno_id, monitor_id], map: "uq_vinculo")
+  usuarios_vinculos_acompanhamento_aluno_idTousuarios   usuarios @relation("vinculos_acompanhamento_aluno_idTousuarios", fields: [aluno_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_vinculo_aluno")
+  usuarios_vinculos_acompanhamento_monitor_idTousuarios usuarios @relation("vinculos_acompanhamento_monitor_idTousuarios", fields: [monitor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_vinculo_monitor")
+
+  @@unique([aluno_id, especialidade], map: "uq_aluno_especialidade")
   @@index([monitor_id], map: "idx_vinculo_monitor")
 }
 
 model ficha_divisoes {
-  id               Int                @id @default(autoincrement())
-  ficha_id         Int
-  letra            String             @db.Char(1)
-  fichas           fichas             @relation(fields: [ficha_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_divisao_ficha")
-  ficha_exercicios ficha_exercicios[]
+  id                 Int                  @id @default(autoincrement())
+  ficha_id           Int
+  letra              String               @db.Char(1)
+  fichas             fichas               @relation(fields: [ficha_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_divisao_ficha")
+  ficha_exercicios   ficha_exercicios[]
+  ficha_divisao_dias ficha_divisao_dias[]
 
   @@unique([ficha_id, letra], map: "uq_ficha_letra")
 }
@@ -120,6 +142,8 @@ model fichas {
   usuarios_fichas_aluno_idTousuarios   usuarios         @relation("fichas_aluno_idTousuarios", fields: [aluno_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ficha_aluno")
   usuarios_fichas_criada_porTousuarios usuarios         @relation("fichas_criada_porTousuarios", fields: [criada_por], references: [id], onUpdate: NoAction, map: "fk_ficha_autor")
 
+  fichas_atuais fichas_atuais?
+
   @@index([criada_por], map: "fk_ficha_autor")
   @@index([aluno_id, status], map: "idx_fichas_aluno_status")
 }
@@ -145,4 +169,138 @@ enum usuarios_especialidade {
 enum fichas_status {
   rascunho
   publicada
+}
+
+model disponibilidades_semanais {
+  id                Int      @id @default(autoincrement())
+  monitor_id        Int
+  dia_semana        Int      @db.UnsignedTinyInt
+  hora_inicio       DateTime @db.Time(0)
+  hora_fim          DateTime @db.Time(0)
+  duracao_minutos   Int
+  intervalo_minutos Int      @default(0)
+  ativo             Boolean  @default(true)
+
+  monitor usuarios @relation(fields: [monitor_id], references: [id])
+
+  @@index([monitor_id, dia_semana], map: "idx_disponibilidade_monitor")
+}
+
+model agendamentos {
+  id            Int                    @id @default(autoincrement())
+  aluno_id      Int
+  monitor_id    Int
+  especialidade usuarios_especialidade
+  data          DateTime               @db.Date
+  hora_inicio   DateTime               @db.Time(0)
+  hora_fim      DateTime               @db.Time(0)
+  status        agendamentos_status    @default(agendado)
+  criado_em     DateTime               @default(now()) @db.Timestamp(0)
+
+  aluno   usuarios @relation("AgendamentoAluno", fields: [aluno_id], references: [id])
+  monitor usuarios @relation("AgendamentoMonitor", fields: [monitor_id], references: [id])
+
+  @@index([aluno_id, data], map: "idx_agendamento_aluno")
+  @@index([monitor_id, data], map: "idx_agendamento_monitor")
+}
+
+enum agendamentos_status {
+  agendado
+  cancelado
+  concluido
+}
+
+enum agenda_eventos_categoria {
+  treino
+  aula
+  avaliacao
+}
+
+enum agenda_eventos_status {
+  agendado
+  cancelado
+  concluido
+}
+
+model agenda_eventos {
+  id             Int                      @id @default(autoincrement())
+  aluno_id       Int
+  categoria      agenda_eventos_categoria
+  titulo         String                   @db.VarChar(150)
+  descricao      String?                  @db.Text
+  data           DateTime                 @db.Date
+  hora_inicio    DateTime                 @db.Time(0)
+  hora_fim       DateTime                 @db.Time(0)
+  responsavel_id Int?
+  local          String?                  @db.VarChar(180)
+  status         agenda_eventos_status    @default(agendado)
+  criado_em      DateTime                 @default(now()) @db.Timestamp(0)
+
+  aluno       usuarios  @relation("AgendaEventoAluno", fields: [aluno_id], references: [id], onDelete: Cascade)
+  responsavel usuarios? @relation("AgendaEventoResponsavel", fields: [responsavel_id], references: [id], onDelete: SetNull)
+
+  @@index([aluno_id, data])
+}
+
+enum usuarios_tipo_autorizacao {
+  completo
+  restrito
+}
+
+enum permissoes_monitores_tipo {
+  alunos
+  triagem
+  treinos
+  acompanhamento
+}
+
+model permissoes_monitores {
+  id            Int                       @id @default(autoincrement())
+  monitor_id    Int
+  permissao     permissoes_monitores_tipo
+  concedida_por Int
+  criado_em     DateTime                  @default(now()) @db.Timestamp(0)
+
+  monitor    usuarios @relation("PermissoesRecebidas", fields: [monitor_id], references: [id], onDelete: Cascade)
+  concedente usuarios @relation("PermissoesConcedidas", fields: [concedida_por], references: [id], onDelete: Restrict)
+
+  @@unique([monitor_id, permissao], map: "uq_monitor_permissao")
+  @@index([concedida_por], map: "idx_permissao_concedente")
+}
+
+model historico_monitores {
+  id            Int      @id @default(autoincrement())
+  monitor_id    Int
+  realizado_por Int?
+  acao          String   @db.VarChar(60)
+  descricao     String?  @db.Text
+  criado_em     DateTime @default(now()) @db.Timestamp(0)
+
+  monitor usuarios  @relation("HistoricoMonitor", fields: [monitor_id], references: [id], onDelete: Cascade)
+  autor   usuarios? @relation("HistoricoAutor", fields: [realizado_por], references: [id], onDelete: SetNull)
+
+  @@index([monitor_id, criado_em], map: "idx_historico_monitor")
+}
+
+model ficha_divisao_dias {
+  id         Int @id @default(autoincrement())
+  divisao_id Int
+  dia_semana Int @db.TinyInt
+
+  ficha_divisoes ficha_divisoes @relation(fields: [divisao_id], references: [id], onDelete: Cascade)
+
+  @@unique([divisao_id, dia_semana])
+}
+
+model fichas_atuais {
+  id             Int       @id @default(autoincrement())
+  aluno_id       Int
+  ficha_id       Int       @unique
+  especialidade  String    @db.VarChar(30)
+  selecionado_em DateTime? @default(now()) @db.Timestamp(0)
+
+  usuarios usuarios @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  fichas   fichas   @relation(fields: [ficha_id], references: [id], onDelete: Cascade)
+
+  @@unique([aluno_id, especialidade], map: "uq_ficha_atual_aluno_especialidade")
 }

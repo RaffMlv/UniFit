@@ -5,6 +5,17 @@ import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
 import { api } from '@/services/api'
 
 const LETRAS = 'ABCDEF'
+
+const DIAS_SEMANA = [
+  { valor: 0, nome: 'Domingo' },
+  { valor: 1, nome: 'Segunda' },
+  { valor: 2, nome: 'Terça' },
+  { valor: 3, nome: 'Quarta' },
+  { valor: 4, nome: 'Quinta' },
+  { valor: 5, nome: 'Sexta' },
+  { valor: 6, nome: 'Sábado' },
+]
+
 const campo = 'w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-[#004AF7] focus:ring-2 focus:ring-[#87B7FF]'
 const botaoPrimario = 'inline-flex items-center justify-center gap-2 rounded-lg bg-[#004AF7] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#142191] disabled:cursor-not-allowed disabled:opacity-60'
 const botaoSecundario = 'inline-flex items-center justify-center gap-2 rounded-lg border border-[#87B7FF] bg-white px-4 py-2.5 text-sm font-medium text-[#142191] hover:bg-[#E4F2FD] disabled:cursor-not-allowed disabled:opacity-60'
@@ -28,7 +39,9 @@ export default function EditarFicha() {
   const [nome, setNome] = useState('')
   const [objetivo, setObjetivo] = useState('')
   const [status, setStatus] = useState('rascunho')
-  const [divisoes, setDivisoes] = useState([{ id: 'A', exercicios: [] }])
+  const [divisoes, setDivisoes] = useState([
+    { id: 'A', diasSemana: [], exercicios: [] }
+  ])
   const [ativa, setAtiva] = useState('A')
   const [biblioteca, setBiblioteca] = useState([])
   const [modalBiblioteca, setModalBiblioteca] = useState(false)
@@ -53,7 +66,10 @@ export default function EditarFicha() {
           setNome(d.ficha.nome)
           setObjetivo(d.ficha.objetivo)
           setStatus(d.ficha.status)
-          const divs = d.ficha.divisoes.map((x) => ({ id: x.letra, exercicios: x.exercicios.map(doServidor) }))
+          const divs = d.ficha.divisoes.map((x) => ({
+            id: x.letra,
+            exercicios: x.exercicios.map(doServidor)
+          }))
           if (divs.length) { setDivisoes(divs); setAtiva(divs[0].id) }
         }
       })
@@ -149,9 +165,14 @@ export default function EditarFicha() {
       status: novoStatus,
       divisoes: divisoes.map((d) => ({
         letra: d.id,
+        diasSemana: d.diasSemana || [],
         exercicios: d.exercicios.map((e) => ({
-          exercicioId: e.exercicioId, series: e.series, repeticoes: e.repeticoes,
-          carga: e.carga, descanso: e.descanso, observacoes: e.observacoes,
+          exercicioId: e.exercicioId,
+          series: e.series,
+          repeticoes: e.repeticoes,
+          carga: e.carga,
+          descanso: e.descanso,
+          observacoes: e.observacoes,
         })),
       })),
     }
@@ -171,6 +192,23 @@ export default function EditarFicha() {
     } finally {
       setEnviando(false)
     }
+  }
+
+  function alternarDia(dia) {
+    mudou()
+
+    setDivisoes((ant) => ant.map((d) => {
+      if (d.id !== ativa) return d
+
+      const selecionados = d.diasSemana || []
+
+      return {
+        ...d,
+        diasSemana: selecionados.includes(dia)
+          ? selecionados.filter((item) => item !== dia)
+          : [...selecionados, dia].sort((a, b) => a - b),
+      }
+    }))
   }
 
   if (carregando) {
@@ -231,6 +269,39 @@ export default function EditarFicha() {
               </button>
             ))}
           </div>
+
+          <div className="mt-5">
+              <h3 className="mb-3 text-sm font-semibold text-[#142191]">
+                Dias de treino
+              </h3>
+
+              <p className="mb-3 text-xs text-slate-500">
+                Selecione os dias em que o aluno deverá realizar esta divisão.
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {DIAS_SEMANA.map((dia) => {
+                  const selecionado = (divisaoAtual?.diasSemana || [])
+                    .includes(dia.valor)
+
+                  return (
+                    <button
+                      key={dia.valor}
+                      type="button"
+                      aria-pressed={selecionado}
+                      onClick={() => alternarDia(dia.valor)}
+                      className={`rounded-lg border px-4 py-2 text-sm font-medium transition ${
+                        selecionado
+                          ? 'border-[#004AF7] bg-[#004AF7] text-white'
+                          : 'border-slate-300 bg-white text-slate-600 hover:bg-[#E4F2FD]'
+                      }`}
+                    >
+                      {dia.nome}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
 
           <div className="mt-5 space-y-4">
             {divisaoAtual?.exercicios.length === 0 && (
@@ -316,6 +387,15 @@ export default function EditarFicha() {
             {divisoes.map((d) => (
               <div key={d.id} className="mt-4 rounded-lg bg-[#E4F2FD] p-3">
                 <p className="font-bold text-[#142191]">Treino {d.id}</p>
+                <p className="mt-1 text-xs text-[#142191]">
+                  Dias: {
+                    d.diasSemana?.length
+                      ? d.diasSemana
+                          .map((dia) => DIAS_SEMANA[dia].nome)
+                          .join(', ')
+                      : 'Nenhum dia selecionado'
+                  }
+                </p>
                 {d.exercicios.map((e) => <p key={e.uid} className="mt-1 text-sm text-[#142191]">{e.nome} · {e.series} x {e.repeticoes}</p>)}
               </div>
             ))}

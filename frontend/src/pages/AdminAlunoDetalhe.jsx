@@ -148,7 +148,12 @@ function SecaoFichas({ alunoId }) {
       <ul className="mt-3 divide-y divide-slate-100">
         {fichas?.map((f) => (
           <li key={f.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
-            <span><strong className="text-[#142191]">{f.nome}</strong> · {f.objetivo} · {f.status === 'publicada' ? 'Publicada' : 'Rascunho'}</span>
+            <span>
+              <strong className="text-[#142191]">{f.nome}</strong>
+              · {f.objetivo}
+              · {f.divisoes?.length || 0} divisões
+              · {f.status === 'publicada' ? 'Publicada' : 'Rascunho'}
+            </span>
             <Link to={`/fichas/${f.id}/editar`} className="font-semibold text-[#004AF7] hover:underline">Editar</Link>
           </li>
         ))}

@@ -58,8 +58,16 @@ router.post('/login', async (req, res) => {
 
   // Aceita CPF com ou sem pontuação, ou e-mail. Só entra quem está ativo.
   const [rows] = await pool.query(
-    `SELECT id, nome, senha_hash, papel FROM usuarios
-     WHERE (cpf = ? OR email = ?) AND ativo = TRUE`,
+        `SELECT
+        id,
+        nome,
+        senha_hash,
+        papel,
+        especialidade,
+        registro_profissional
+    FROM usuarios
+    WHERE (cpf = ? OR email = ?)
+    AND ativo = TRUE`,
     [somenteDigitos(login), String(login).trim()])
   const usuario = rows[0]
   const senhaValida = usuario ? await bcrypt.compare(String(senha), usuario.senha_hash) : false
@@ -70,6 +78,7 @@ router.post('/login', async (req, res) => {
   res.cookie('token', token, cookieOptions)
   res.json({
     message: 'Login realizado com sucesso.',
+    token,
     usuario: { id: usuario.id, nome: usuario.nome, papel: usuario.papel, especialidade: usuario.especialidade },
   })
 })
@@ -82,9 +91,17 @@ router.post('/logout', (req, res) => {
 
 router.get('/perfil', autenticar, async (req, res) => {
   const [rows] = await pool.query(
-    `SELECT u.id, u.nome, u.cpf, u.email, u.papel, u.especialidade,
-            t.objetivo AS objetivo,
-            t.usuario_id IS NOT NULL AS triagemConcluida
+    `SELECT
+    u.id,
+    u.nome,
+    u.cpf,
+    u.email,
+    u.papel,
+    u.especialidade,
+    u.tipo_autorizacao,
+    u.supervisor_id,
+    t.objetivo AS objetivo,
+    t.usuario_id IS NOT NULL AS triagemConcluida
      FROM usuarios u
      LEFT JOIN triagens t ON t.usuario_id = u.id
      WHERE u.id = ?`, [req.usuario.id])
