@@ -168,6 +168,16 @@ export default function AdminTreinos({ fichas = [] }) {
   )
 }
 
+const diasSemana = [
+  'Domingo',
+  'Segunda-feira',
+  'Terça-feira',
+  'Quarta-feira',
+  'Quinta-feira',
+  'Sexta-feira',
+  'Sábado',
+]
+
 function FichaModal({ ficha, aoFechar }) {
   const divisoes = ficha.divisoes || []
   const estado = ficha.situacao || ficha.status || 'rascunho'
