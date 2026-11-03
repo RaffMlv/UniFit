@@ -63,6 +63,8 @@ model usuarios {
 
   historico_como_alvo  historico_monitores[] @relation("HistoricoMonitor")
   historico_como_autor historico_monitores[] @relation("HistoricoAutor")
+
+  fichas_atuais fichas_atuais[]
 }
 
 model exercicios {
@@ -100,11 +102,12 @@ model vinculos_acompanhamento {
 }
 
 model ficha_divisoes {
-  id               Int                @id @default(autoincrement())
-  ficha_id         Int
-  letra            String             @db.Char(1)
-  fichas           fichas             @relation(fields: [ficha_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_divisao_ficha")
-  ficha_exercicios ficha_exercicios[]
+  id                 Int                  @id @default(autoincrement())
+  ficha_id           Int
+  letra              String               @db.Char(1)
+  fichas             fichas               @relation(fields: [ficha_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_divisao_ficha")
+  ficha_exercicios   ficha_exercicios[]
+  ficha_divisao_dias ficha_divisao_dias[]
 
   @@unique([ficha_id, letra], map: "uq_ficha_letra")
 }
@@ -138,6 +141,8 @@ model fichas {
   ficha_divisoes                       ficha_divisoes[]
   usuarios_fichas_aluno_idTousuarios   usuarios         @relation("fichas_aluno_idTousuarios", fields: [aluno_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ficha_aluno")
   usuarios_fichas_criada_porTousuarios usuarios         @relation("fichas_criada_porTousuarios", fields: [criada_por], references: [id], onUpdate: NoAction, map: "fk_ficha_autor")
+
+  fichas_atuais fichas_atuais?
 
   @@index([criada_por], map: "fk_ficha_autor")
   @@index([aluno_id, status], map: "idx_fichas_aluno_status")
@@ -275,4 +280,27 @@ model historico_monitores {
   autor   usuarios? @relation("HistoricoAutor", fields: [realizado_por], references: [id], onDelete: SetNull)
 
   @@index([monitor_id, criado_em], map: "idx_historico_monitor")
+}
+
+model ficha_divisao_dias {
+  id         Int @id @default(autoincrement())
+  divisao_id Int
+  dia_semana Int @db.TinyInt
+
+  ficha_divisoes ficha_divisoes @relation(fields: [divisao_id], references: [id], onDelete: Cascade)
+
+  @@unique([divisao_id, dia_semana])
+}
+
+model fichas_atuais {
+  id             Int       @id @default(autoincrement())
+  aluno_id       Int
+  ficha_id       Int       @unique
+  especialidade  String    @db.VarChar(30)
+  selecionado_em DateTime? @default(now()) @db.Timestamp(0)
+
+  usuarios usuarios @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  fichas   fichas   @relation(fields: [ficha_id], references: [id], onDelete: Cascade)
+
+  @@unique([aluno_id, especialidade], map: "uq_ficha_atual_aluno_especialidade")
 }

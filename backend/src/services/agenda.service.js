@@ -71,7 +71,75 @@ export async function buscarEventosDaAgenda(alunoId, inicio, fim) {
         alunoId, inicio, fim
     ]);
 
-    return eventos;
+    const sqlTreinos = `
+        SELECT
+            f.id AS ficha_id,
+            f.nome AS ficha_nome,
+            d.id AS divisao_id,
+            d.letra,
+            fd.dia_semana
+        FROM fichas f
+        INNER JOIN ficha_divisoes d
+            ON d.ficha_id = f.id
+        INNER JOIN ficha_divisao_dias fd
+            ON fd.divisao_id = d.id
+        WHERE f.id = (
+            SELECT f2.id
+            FROM fichas f2
+            WHERE f2.aluno_id = ?
+            AND f2.status = 'publicada'
+            ORDER BY f2.atualizado_em DESC, f2.id DESC
+            LIMIT 1
+        )
+        ORDER BY d.letra, fd.dia_semana
+    `;
+
+    const [divisoes] = await pool.query(sqlTreinos, [alunoId]);
+
+    const eventosTreino = [];
+
+    const dataAtual = new Date(`${inicio}T00:00:00Z`);
+    const dataFinal = new Date(`${fim}T00:00:00Z`);
+
+    while (dataAtual <= dataFinal) {
+        const data = dataAtual.toISOString().slice(0, 10);
+        const diaSemana = dataAtual.getUTCDay();
+
+        const divisoesDoDia = divisoes.filter(
+            divisao => Number(divisao.dia_semana) === diaSemana
+        );
+
+        for (const divisao of divisoesDoDia) {
+            eventosTreino.push({
+                id: `treino-${divisao.ficha_id}-${divisao.divisao_id}-${data}`,
+                categoria: 'treino',
+                titulo: `Treino ${divisao.letra}`,
+                data,
+                inicio: null,
+                fim: null,
+                responsavel: null,
+                local: null,
+                status: 'agendado',
+                descricao: `${divisao.ficha_nome} - Divisão ${divisao.letra}`
+            });
+        }
+
+        dataAtual.setUTCDate(dataAtual.getUTCDate() + 1);
+    }
+
+    return [...eventos, ...eventosTreino].sort((a, b) => {
+        const comparacaoData = a.data.localeCompare(b.data);
+
+        if (comparacaoData !== 0) {
+            return comparacaoData;
+        }
+
+        // Eventos sem horário aparecem primeiro no dia.
+        if (!a.inicio) return -1;
+        if (!b.inicio) return 1;
+
+        return a.inicio.localeCompare(b.inicio);
+    });
 }
 
 function validarHora(hora) {

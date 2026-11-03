@@ -167,7 +167,12 @@ export default function Agenda() {
   function eventosDoDia(dia) {
     return eventos
       .filter(evento => evento.data === chaveData(dia))
-      .sort((a, b) => a.inicio.localeCompare(b.inicio))
+      .sort((a, b) => {
+        if (!a.inicio) return -1
+        if (!b.inicio) return 1
+
+        return a.inicio.localeCompare(b.inicio)
+      })
   }
 
   function renderizarEvento(evento) {
@@ -185,7 +190,11 @@ export default function Agenda() {
         } ${selecionadoId === evento.id ? 'ring-2 ring-[#004AF7]' : ''}`}
       >
         <span className="block font-bold">{evento.titulo}</span>
-        <span>{evento.inicio}–{evento.fim}</span>
+        {evento.inicio && evento.fim && (
+            <span>
+              {evento.inicio}–{evento.fim}
+            </span>
+        )}
         {evento.status === 'cancelado' && (
           <span className="block font-semibold">Cancelado</span>
         )}
@@ -350,6 +359,28 @@ export default function Agenda() {
                     ))}
                   </tr>
                 </thead>
+
+                <tbody>
+                  <tr>
+                    <th className="border-t border-slate-100 p-3 text-xs font-medium text-slate-500">
+                      Sem horário
+                    </th>
+
+                    {diasDaSemana.map(dia => (
+                      <td
+                        key={chaveData(dia)}
+                        className="border-l border-t border-slate-100 p-1.5 align-top"
+                      >
+                        <div className="space-y-1">
+                          {eventosDoDia(dia)
+                            .filter(evento => !evento.inicio)
+                            .map(renderizarEvento)}
+                        </div>
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+
                 <tbody>
                   {horas.map(hora => (
                     <tr key={hora}>
@@ -369,6 +400,7 @@ export default function Agenda() {
                           <div className="space-y-1">
                             {eventosDoDia(dia)
                               .filter(evento =>
+                                evento.inicio &&
                                 Number(evento.inicio.split(':')[0]) === hora
                               )
                               .map(renderizarEvento)}
@@ -475,24 +507,6 @@ export default function Agenda() {
                   {selecionado.descricao}
                 </p>
               )}
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                {  }
-                <button
-                  type="button"
-                  disabled
-                  className="rounded-lg border border-red-200 px-4 py-3 text-sm font-semibold text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Cancelar agendamento
-                </button>
-                <button
-                  type="button"
-                  disabled
-                  className={`${botao} disabled:cursor-not-allowed disabled:opacity-50`}
-                >
-                  Ver detalhes do agendamento
-                </button>
-              </div>
             </div>
           )}
         </section>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import {
   ClipboardList,
   Search,
@@ -8,8 +8,10 @@ import {
   CalendarDays,
   Eye,
   X,
+  Trash2
 } from 'lucide-react'
 import LayoutAutenticado from '@/components/ui/LayoutAutenticado'
+import { api } from '@/services/api'
 
 const situacoes = [
   { id: 'todos', nome: 'Todas as situações' },
@@ -33,10 +35,33 @@ const coresSituacao = {
   devolvido: 'bg-rose-50 text-rose-700',
 }
 
-export default function AdminTreinos({ fichas = [] }) {
+export default function AdminTreinos() {
+  const [fichas, setFichas] = useState([])
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState('')
   const [busca, setBusca] = useState('')
   const [situacao, setSituacao] = useState('todos')
   const [fichaSelecionada, setFichaSelecionada] = useState(null)
+
+  useEffect(() => {
+    async function carregarFichas() {
+      try {
+        setCarregando(true)
+        setErro('')
+
+        const resposta = await api('/fichas/admin/todas')
+
+        setFichas(resposta.fichas)
+      } catch (error) {
+        console.error('Erro ao carregar fichas:', error)
+        setErro(error.message || 'Não foi possível carregar as fichas.')
+      } finally {
+        setCarregando(false)
+      }
+    }
+
+    carregarFichas()
+  }, [])
 
   const lista = useMemo(() => {
     const termo = busca.trim().toLocaleLowerCase('pt-BR')
@@ -53,6 +78,33 @@ export default function AdminTreinos({ fichas = [] }) {
       return correspondeSituacao && correspondeBusca
     })
   }, [fichas, busca, situacao])
+
+  const excluirFicha = async (ficha) => {
+    const confirmou = window.confirm(
+      `Tem certeza de que deseja excluir a ficha "${ficha.nome}"? Essa ação não poderá ser desfeita.`
+    )
+
+    if (!confirmou) return
+
+    try {
+      await api(`/fichas/${ficha.id}`, {
+        method: 'DELETE'
+      })
+
+      setFichas(fichasAtuais =>
+        fichasAtuais.filter(item => item.id !== ficha.id)
+      )
+
+      if (fichaSelecionada?.id === ficha.id) {
+        setFichaSelecionada(null)
+      }
+
+      window.alert('Ficha excluída com sucesso!')
+    } catch (error) {
+      console.error('Erro ao excluir ficha:', error)
+      window.alert(error.message || 'Não foi possível excluir a ficha.')
+    }
+  }
 
   return (
     <LayoutAutenticado titulo="Gerenciar treinos">
@@ -88,6 +140,19 @@ export default function AdminTreinos({ fichas = [] }) {
             </select>
           </label>
         </section>
+
+        {carregando && (
+            <p>Carregando fichas...</p>
+          )}
+
+          {erro && (
+            <p className="text-red-500">{erro}</p>
+          )}
+
+          {!carregando && !erro && fichas.length === 0 && (
+            <p>Nenhuma ficha encontrada.</p>
+          )}
+
 
         <section className="overflow-hidden rounded-2xl bg-white shadow-sm" aria-label="Fichas de treino">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-5 py-4 sm:px-6">
@@ -145,9 +210,27 @@ export default function AdminTreinos({ fichas = [] }) {
                         </td>
                         <td className="px-5 py-4">{ficha.atualizadoEm || '—'}</td>
                         <td className="px-5 py-4">
-                          <button type="button" onClick={() => setFichaSelecionada(ficha)} className="inline-flex min-h-9 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-[#004AF7] hover:bg-[#E4F2FD]" aria-label={`Visualizar ficha ${ficha.nome || ''}`}>
-                            <Eye size={17} aria-hidden="true" /> Visualizar
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setFichaSelecionada(ficha)}
+                              className="inline-flex min-h-9 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-[#004AF7] hover:bg-[#E4F2FD]"
+                              aria-label={`Visualizar ficha ${ficha.nome || ''}`}
+                            >
+                              <Eye size={17} aria-hidden="true" />
+                              Visualizar
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => excluirFicha(ficha)}
+                              className="inline-flex min-h-9 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+                              aria-label={`Excluir ficha ${ficha.nome || ''}`}
+                            >
+                              <Trash2 size={17} aria-hidden="true" />
+                              Excluir
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     )
@@ -181,63 +264,171 @@ const diasSemana = [
 function FichaModal({ ficha, aoFechar }) {
   const divisoes = ficha.divisoes || []
   const estado = ficha.situacao || ficha.status || 'rascunho'
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#142191]/60 p-4" onMouseDown={(evento) => evento.target === evento.currentTarget && aoFechar()}>
-      <section role="dialog" aria-modal="true" aria-labelledby="tituloFicha" className="my-6 max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#142191]/60 p-4"
+      onMouseDown={(evento) =>
+        evento.target === evento.currentTarget && aoFechar()
+      }
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tituloFicha"
+        className="my-6 max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7"
+      >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold text-[#004AF7]">Detalhes da ficha</p>
-            <h2 id="tituloFicha" className="mt-1 font-heading text-2xl font-bold text-[#142191]">{ficha.nome || 'Ficha de treino'}</h2>
+            <p className="text-sm font-semibold text-[#004AF7]">
+              Detalhes da ficha
+            </p>
+            <h2
+              id="tituloFicha"
+              className="mt-1 font-heading text-2xl font-bold text-[#142191]"
+            >
+              {ficha.nome || 'Ficha de treino'}
+            </h2>
           </div>
-          <button type="button" onClick={aoFechar} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" aria-label="Fechar detalhes"><X size={20} /></button>
+
+          <button
+            type="button"
+            onClick={aoFechar}
+            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
+            aria-label="Fechar detalhes"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <Resumo icon={UserRound} label="Aluno" value={ficha.aluno?.nome || 'Não informado'} />
-          <Resumo icon={UsersRound} label="Monitor responsável" value={ficha.monitor?.nome || 'Não informado'} />
-          <Resumo icon={Dumbbell} label="Objetivo" value={ficha.objetivo || 'Não informado'} />
-          <Resumo icon={CalendarDays} label="Situação" value={rotulosSituacao[estado] || estado} />
+          <Resumo
+            icon={UserRound}
+            label="Aluno"
+            value={ficha.aluno?.nome || 'Não informado'}
+          />
+          <Resumo
+            icon={UsersRound}
+            label="Monitor responsável"
+            value={ficha.monitor?.nome || 'Não informado'}
+          />
+          <Resumo
+            icon={Dumbbell}
+            label="Objetivo"
+            value={ficha.objetivo || 'Não informado'}
+          />
+          <Resumo
+            icon={CalendarDays}
+            label="Situação"
+            value={rotulosSituacao[estado] || estado}
+          />
         </div>
 
         <div className="mt-6 space-y-4">
-          <h3 className="font-heading text-lg font-bold text-[#142191]">Divisões e exercícios</h3>
+          <h3 className="font-heading text-lg font-bold text-[#142191]">
+            Divisões e exercícios
+          </h3>
+
           {divisoes.length === 0 ? (
-            <p className="rounded-lg bg-slate-50 p-4 text-sm text-slate-500">Esta ficha não possui divisões carregadas.</p>
-          ) : divisoes.map((divisao, indice) => (
-            <section key={divisao.id || divisao.nome || indice} className="rounded-xl border border-slate-200 p-4">
-              <h4 className="font-semibold text-[#142191]">{divisao.nome || `Divisão ${indice + 1}`}</h4>
-              {!divisao.exercicios?.length ? (
-                <p className="mt-2 text-sm text-slate-500">Nenhum exercício informado.</p>
-              ) : (
-                <div className="mt-3 overflow-x-auto">
-                  <table className="w-full min-w-[560px] text-left text-sm">
-                    <thead className="text-xs uppercase text-slate-500">
-                      <tr><th className="py-2 pr-3">Exercício</th><th className="py-2 pr-3">Séries</th><th className="py-2 pr-3">Repetições</th><th className="py-2 pr-3">Carga</th><th className="py-2">Descanso</th></tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {divisao.exercicios.map((exercicio, exIndice) => (
-                        <tr key={exercicio.id || `${divisao.nome}-${exIndice}`} className="text-slate-700">
-                          <td className="py-2 pr-3 font-medium">{exercicio.nome || 'Exercício'}</td>
-                          <td className="py-2 pr-3">{exercicio.series ?? '—'}</td>
-                          <td className="py-2 pr-3">{exercicio.repeticoes ?? '—'}</td>
-                          <td className="py-2 pr-3">{exercicio.carga ?? '—'}</td>
-                          <td className="py-2">{exercicio.descanso ?? '—'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+            <p className="rounded-lg bg-slate-50 p-4 text-sm text-slate-500">
+              Esta ficha não possui divisões carregadas.
+            </p>
+          ) : (
+            divisoes.map((divisao, indice) => (
+              <section
+                key={divisao.id || divisao.letra || indice}
+                className="rounded-xl border border-slate-200 p-4"
+              >
+                <h4 className="font-semibold text-[#142191]">
+                  Divisão {divisao.letra || indice + 1}
+                </h4>
+
+                <div className="mt-3">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Dias de treinamento
+                  </p>
+
+                  {divisao.diasSemana?.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {divisao.diasSemana
+                        .slice()
+                        .sort((a, b) => a - b)
+                        .map((dia) => (
+                          <span
+                            key={dia}
+                            className="rounded-full bg-[#E4F2FD] px-3 py-1 text-xs font-semibold text-[#004AF7]"
+                          >
+                            {diasSemana[dia]}
+                          </span>
+                        ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-slate-500">
+                      Nenhum dia associado.
+                    </p>
+                  )}
                 </div>
-              )}
-            </section>
-          ))}
+
+                {!divisao.exercicios?.length ? (
+                  <p className="mt-4 text-sm text-slate-500">
+                    Nenhum exercício informado.
+                  </p>
+                ) : (
+                  <div className="mt-4 overflow-x-auto">
+                    <table className="w-full min-w-[560px] text-left text-sm">
+                      <thead className="text-xs uppercase text-slate-500">
+                        <tr>
+                          <th className="py-2 pr-3">Exercício</th>
+                          <th className="py-2 pr-3">Séries</th>
+                          <th className="py-2 pr-3">Repetições</th>
+                          <th className="py-2 pr-3">Carga</th>
+                          <th className="py-2">Descanso</th>
+                        </tr>
+                      </thead>
+
+                      <tbody className="divide-y divide-slate-100">
+                        {divisao.exercicios.map((exercicio, exIndice) => (
+                          <tr
+                            key={exercicio.itemId || exercicio.exercicioId || exIndice}
+                            className="text-slate-700"
+                          >
+                            <td className="py-2 pr-3 font-medium">
+                              {exercicio.nome || 'Exercício'}
+                            </td>
+                            <td className="py-2 pr-3">
+                              {exercicio.series ?? '—'}
+                            </td>
+                            <td className="py-2 pr-3">
+                              {exercicio.repeticoes ?? '—'}
+                            </td>
+                            <td className="py-2 pr-3">
+                              {exercicio.carga ?? '—'}
+                            </td>
+                            <td className="py-2">
+                              {exercicio.descanso ?? '—'} s
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
+            ))
+          )}
         </div>
 
-        <button type="button" onClick={aoFechar} className="mt-6 min-h-11 w-full rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50">Fechar</button>
+        <button
+          type="button"
+          onClick={aoFechar}
+          className="mt-6 min-h-11 w-full rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+        >
+          Fechar
+        </button>
       </section>
     </div>
   )
 }
-
 function Resumo({ icon: Icone, label, value }) {
   return (
     <div className="flex gap-3 rounded-xl bg-[#E4F2FD] p-3">
