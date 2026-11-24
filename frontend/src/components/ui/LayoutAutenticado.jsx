@@ -4,7 +4,7 @@ import {
   Activity, Bell, CalendarCheck, CalendarDays, ChevronDown, CreditCard,
   Dumbbell, HeartPulse, Home, LogOut, Menu, Settings, Stethoscope,
   TrendingUp, User, Users, X, Library, Wrench, UserRound, ClipboardList,
-  FileSpreadsheet
+  FileSpreadsheet, BookOpen
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -260,6 +260,18 @@ export default function LayoutAutenticado({ titulo, children, menu}) {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-3">
+            {usuario?.papel === 'aluno' && (
+              <button
+                type="button"
+                onClick={() => navigate('/tutorial')}
+                aria-label="Abrir tutorial do UniFit"
+                title="Tutorial do UniFit"
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[#142191] hover:bg-[#E4F2FD] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#004AF7]"
+              >
+                <BookOpen size={20} aria-hidden="true" />
+                <span className="hidden sm:inline">Tutorial</span>
+              </button>
+            )}
             <button
               type="button"
               aria-label={naoLidas > 0 ? `Notificações, ${naoLidas} não lidas` : 'Notificações'}

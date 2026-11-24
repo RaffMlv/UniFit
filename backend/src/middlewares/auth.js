@@ -6,6 +6,8 @@ export async function autenticar(req, res, next) {
   const bearerToken = authorization?.startsWith('Bearer ')
     ? authorization.slice(7).trim()
     : null
+console.log('Cookies recebidos:', Object.keys(req.cookies ?? {}))
+console.log('Authorization presente:', Boolean(authorization))
   const token = req.cookies?.token || bearerToken
   if (!token) return res.status(401).json({ erro: 'Não autenticado' })
 

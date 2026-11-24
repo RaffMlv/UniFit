@@ -6,14 +6,14 @@ import { pool } from '../config/db.js'
 import { autenticar } from '../middlewares/auth.js'
 
 const router = Router()
+const emProducao = process.env.NODE_ENV === 'production'
 
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'none',
-  maxAge: 8 * 60 * 60 * 1000, // 8 horas
+  secure: emProducao,
+  sameSite: emProducao ? 'none' : 'lax',
+  maxAge: 8 * 60 * 60 * 1000,
 }
-
 const somenteDigitos = (v) => String(v ?? '').replace(/\D/g, '')
 
 function validarCPF(cpf) {

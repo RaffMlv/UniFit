@@ -1,4 +1,6 @@
-const API_URL = 'https://unifit-production-8008f252.up.railway.app'
+const API_URL = import.meta.env.DEV
+  ? 'http://localhost:3333'
+  : 'https://unifit-production-8008f252.up.railway.app'
 
 export async function api(path, options = {}) {
     const res = await fetch(`${API_URL}/api${path}`, {

@@ -28,6 +28,7 @@ import AdminAulas from '@/pages/AdminAulas'
 import AdminAtendimentos from '@/pages/AdminAtendimentos'
 import AdminFinanceiro from '@/pages/AdminFinanceiro'
 import AdminRelatorios from '@/pages/AdminRelatorios'
+import TutorialUniFit from '@/pages/TutorialUniFit'
 import { rotaInicial } from './routes/rotaInicial'
 import { useAuth } from '@/contexts/AuthContext'
 import { api } from '@/services/api'
@@ -92,6 +93,14 @@ export default function App() {
       <Route path="/admin/atendimentos" element={<RotaProtegida roles={['admin']}><AdminAtendimentos /></RotaProtegida>} />
       <Route path="/admin/financeiro" element={<RotaProtegida roles={['admin']}><AdminFinanceiro /></RotaProtegida>} />
       <Route path="/admin/relatorios" element={<RotaProtegida roles={['admin']}><AdminRelatorios /></RotaProtegida>} />
+      <Route
+          path="/tutorial"
+          element={
+            <RotaProtegida roles={['aluno']}>
+              <TutorialUniFit />
+            </RotaProtegida>
+          }
+        />
     </Routes>
   )
 }
