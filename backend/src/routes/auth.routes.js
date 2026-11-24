@@ -10,7 +10,7 @@ const router = Router()
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
+  sameSite: 'none',
   maxAge: 8 * 60 * 60 * 1000, // 8 horas
 }
 
@@ -89,7 +89,7 @@ router.post('/logout', (req, res) => {
   res.json({ message: 'Logout realizado com sucesso.' })
 })
 
-router.get('/perfil', autenticar, async (req, res) => {
+router.get('/perfil',   car, async (req, res) => {
   const [rows] = await pool.query(
     `SELECT
     u.id,
