@@ -89,7 +89,7 @@ router.post('/logout', (req, res) => {
   res.json({ message: 'Logout realizado com sucesso.' })
 })
 
-router.get('/perfil',   car, async (req, res) => {
+router.get('/perfil', autenticar, async (req, res) => {
   const [rows] = await pool.query(
     `SELECT
     u.id,
